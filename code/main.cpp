@@ -3,51 +3,51 @@
 // type
 
 struct TJatekMod {
-    Integer SzaggatasTag;
-    Integer StartPont;
-    Boolean UjMenetnelTorol;
-    Boolean VanKeret;
-    Boolean LyukPont;
+    int SzaggatasTag;
+    int StartPont;
+    bool UjMenetnelTorol;
+    bool VanKeret;
+    bool LyukPont;
 };
 
 struct THalalfej {
     TPoint Coord_TopLeft;
-    Integer Idozites;
+    int Idozites;
 };
 
 struct TKettoSzin {
-    Byte SajatSzin;
-    Byte NemFekete;
+    int SajatSzin;
+    int NemFekete;
 };
 
 class TFegyver : public TTriggerable
 {
 public:
     TTimer Timer;
-    Integer Szog;
-    Byte Szam; // a játékos száma
-    Real X;
-    Real Y;
-    TFegyver(Integer x, Integer y, Integer irany, Byte Tulaj);
+    int Szog;
+    int Szam; // a játékos száma
+    double X;
+    double Y;
+    TFegyver(int x, int y, int irany, int Tulaj);
     void OnTimer(TObject Sender) override;
     void Destroy();
 };
 
 struct TVektor {
    TPoint Pont;
-   Integer Szog;
-   Boolean Hasznalt;
+   int Szog;
+   bool Hasznalt;
 };
 
 struct TJatekos {
-   Integer Gomb[3 + 1];
-   Integer Irany;
-   ShortInt Kanyar;
-   Real HelyX;
-   Real HelyY;
-   Boolean Engedett;
-   Boolean FegyverAktiv;
-   Byte Pont;
+   int Gomb[3 + 1];
+   int Irany;
+   int Kanyar;
+   double HelyX;
+   double HelyY;
+   bool Engedett;
+   bool FegyverAktiv;
+   int Pont;
    TFegyver* Fegyver;
    THalalfej Halalfej;
    TBitmap* bmpVonal;
@@ -85,20 +85,20 @@ public:
     TLabel Label8;
     TLabel Label12;
     TLabel NewRaceLabel;
-    void NewFegyver(Byte a);
-    static TKettoSzin SzineketSzamol(Word x, Word y, Byte szam);
+    void NewFegyver(int a);
+    static TKettoSzin SzineketSzamol(int x, int y, int szam);
     void FormCreate(TObject Sender);
-    void UresImage(Boolean Torol, Boolean VanKeret);
+    void UresImage(bool Torol, bool VanKeret);
     void Timer1Timer(TObject Sender);
-    void FormKeyDown(TObject Sender, Word Key, TShiftState Shift);
-    void FormKeyUp(TObject Sender, Word Key, TShiftState Shift);
-    void FormMouseDown(TObject Sender, TMouseButton Button, TShiftState Shift, Integer X, Integer Y);
-    void FormMouseUp(TObject Sender, TMouseButton Button, TShiftState Shift, Integer X, Integer Y);
+    void FormKeyDown(TObject Sender, int Key, TShiftState Shift);
+    void FormKeyUp(TObject Sender, int Key, TShiftState Shift);
+    void FormMouseDown(TObject Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
+    void FormMouseUp(TObject Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
     void FormClose(TObject Sender, TCloseAction Action);
     void FormShow(TObject Sender);
     void UjMenet();
     void PanelLabelHideAll();
-    static Boolean JatekosPozicioRendben();
+    static bool JatekosPozicioRendben();
     void JatekosokatLerak();
     void PaintBoxRajzol();
     void PaintBoxOnPaint(TObject Sender);
@@ -106,15 +106,15 @@ public:
 
 // const
 
-const Integer Jatekosok = 7;
+const int Jatekosok = 7;
 const TColor Szinek[Jatekosok] = {clRed,clYellow,clBlue,clOlive,clLime,clMagenta,clAqua};
-const Integer Ut = 3;
-const Integer FegyverSebesseg = 1.3 * Ut;
-const Integer Fokok = 4;
-const Integer Vastagsag = 4; // nem lehet több 10-nél, különben a falnélküli mód hibásan viselkedhet
-const Integer VastagsagDelta = 2; // (Vastagsag-1) div 2
-const Integer MinimalisJatekos=1;
-const String strSzabalyok =
+const int Ut = 3;
+const int FegyverSebesseg = 1.3 * Ut;
+const int Fokok = 4;
+const int Vastagsag = 4; // nem lehet több 10-nél, különben a falnélküli mód hibásan viselkedhet
+const int VastagsagDelta = 2; // (Vastagsag-1) div 2
+const int MinimalisJatekos=1;
+const string strSzabalyok =
    "  A vezérlés részben látja a vezérlőgombokat. Nyomja meg valamelyik sor első vezérlőgombját (egérnél bal gomb), így a gombhoz tartozó játékost aktiválja, aki részt vesz majd a játékban. "
    "A játékos kikapcsolásához nyomja meg a játékoshoz tartozó második gombot (egérnél jobb gomb).\r\n\r\n"
    "  A játék indítása után az első és második gombobbal irányíthatja a játékos színével megegyező színű vonalat. A cél, hogy ne ütközzön falba vagy egy másik vonalba. Amikor egy vonal falba ütközik, a még játékban lévő játékosok 2-2 pontot kapnak.\r\n"
@@ -122,20 +122,20 @@ const String strSzabalyok =
    "  Játék közben a harmadik vezérlőgomb (egérnél középső gomb) használatával lehet lőni: ez annyit jelent, hogy a játékos vonalából a haladási iránnyal megegyező irányban egy vörös golyó indul el, utat csinálva ezáltal a játékosnak.\r\n"
    "  Egy játékosnak egyszerre egy golyója lehet a képernyőn. Egy golyó kilövése 1 pontba kerül, és legalább ennyi szükséges a kilövéshez.";
 const TJatekMod JatekMod[4] = {
-    {.SzaggatasTag = 67, .StartPont = 0, .UjMenetnelTorol = True,  .VanKeret = True,  .LyukPont = True},
-    {.SzaggatasTag = 70, .StartPont = 3, .UjMenetnelTorol = True,  .VanKeret = True,  .LyukPont = False},
-    {.SzaggatasTag = 26, .StartPont = 0, .UjMenetnelTorol = False, .VanKeret = True,  .LyukPont = False},
-    {.SzaggatasTag = 66, .StartPont = 0, .UjMenetnelTorol = True,  .VanKeret = False, .LyukPont = True}
+    {.SzaggatasTag = 67, .StartPont = 0, .UjMenetnelTorol = true,  .VanKeret = true,  .LyukPont = true},
+    {.SzaggatasTag = 70, .StartPont = 3, .UjMenetnelTorol = true,  .VanKeret = true,  .LyukPont = false},
+    {.SzaggatasTag = 26, .StartPont = 0, .UjMenetnelTorol = false, .VanKeret = true,  .LyukPont = false},
+    {.SzaggatasTag = 66, .StartPont = 0, .UjMenetnelTorol = true,  .VanKeret = false, .LyukPont = true}
 };
 
 // var
 
 TForm1 Form1;
 TJatekos Jatekos[Jatekosok + 1];
-Integer KepSzeles;
-Integer KepMagas;
-Real Tabla[2 + 1][360];
-Byte PanelJatszoEmberek;
+int KepSzeles;
+int KepMagas;
+double Tabla[2 + 1][360];
+int PanelJatszoEmberek;
 TLabel* PontLabel[Jatekosok];
 TLabel* PanelLabel[Jatekosok];
 TBitmap* BitKep;
@@ -143,13 +143,13 @@ TBitmap* BitKep2;
 TBitmap* bmpVonalFekete;
 TPoint arrSzurkePixelek[];
 TVektor arrLyukak[];
-Integer Lyukak_SzaggatasFele; // a szaggatás középpontjának a Timer.Tag-je
+int Lyukak_SzaggatasFele; // a szaggatás középpontjának a Timer.Tag-je
 TJatekMod AktualisMod;
 TBitmap* PuffBitmap0;
 
 // implementation
 
-void TForm1::NewFegyver(Byte a)
+void TForm1::NewFegyver(int a)
 {
     if (!Jatekos[a].FegyverAktiv && Jatekos[a].Pont >= 1 && Jatekos[a].Engedett) {
         Jatekos[a].Pont--;
@@ -158,13 +158,13 @@ void TForm1::NewFegyver(Byte a)
     }
 }
 
-TFegyver::TFegyver(Integer x, Integer y, Integer Irany, Byte Tulaj) : Timer(Form1)
+TFegyver::TFegyver(int x, int y, int Irany, int Tulaj) : Timer(Form1)
 {
     Szog = Irany;
     X = x + Tabla[2][Szog] * 18;
     Y = y - Tabla[1][Szog] * 18;
     Szam = Tulaj;
-    Jatekos[Szam].FegyverAktiv = True;
+    Jatekos[Szam].FegyverAktiv = true;
 
     Timer.Interval = Form1.Timer1.Interval;
     Timer.OnTimer = TTriggerable::OnTimer;
@@ -174,7 +174,7 @@ void TFegyver::OnTimer(TObject Sender)
 {
     BitKep->Canvas.Draw(Round(X) - 9, Round(Y) - 9, PuffBitmap0);
     if (!Form1.Timer1.Enabled) {
-        Timer.Enabled = False;
+        Timer.Enabled = false;
         return;
     }
     X = X + Tabla[2][Szog] * FegyverSebesseg;
@@ -188,24 +188,22 @@ void TFegyver::OnTimer(TObject Sender)
 
 void TFegyver::Destroy()
 {
-    Timer.Enabled = False;
+    Timer.Enabled = false;
     Timer.Free();
-    Jatekos[Szam].FegyverAktiv = False;
+    Jatekos[Szam].FegyverAktiv = false;
 }
 
-TKettoSzin TForm1::SzineketSzamol(Word x, Word y, Byte szam)
+TKettoSzin TForm1::SzineketSzamol(int x, int y, int szam)
 {
-    Word a, b;
-    TColor c, c2;
     TKettoSzin e;
 
-    c2 = Szinek[szam];
+    TColor c2 = Szinek[szam];
     e.SajatSzin = 0;
     e.NemFekete = 0;
 
-    for (a = x; a <= x + 3; a++) {
-        for (b = y; b <= y + 3; b++) {
-            c = BitKep->Canvas.Pixels[a][b];
+    for (int a = x; a <= x + 3; a++) {
+        for (int b = y; b <= y + 3; b++) {
+            TColor c = BitKep->Canvas.Pixels[a][b];
             if ((a >= KepSzeles) || (b >= KepMagas)) {
                 continue; // Ha a képpont kívül esik a tartományon, akkor nem kell vizsgálni.
             }
@@ -223,20 +221,17 @@ TKettoSzin TForm1::SzineketSzamol(Word x, Word y, Byte szam)
 
 void TForm1::FormCreate(TObject Sender)
 {
-    Integer x, a, b;
-
     KepSzeles = Screen.Width - 120;
     KepMagas = Screen.Height;
-    //DoubleBuffered = True;
 
     PanelJatszoEmberek = 0;
 
-    for (x = 0; x < 360; x++) {
-        Tabla[1][x] = Sin(x * Pi / 180);
-        Tabla[2][x] = Cos(x * Pi / 180);
+    for (int x = 0; x < 360; x++) {
+        Tabla[1][x] = sin(x * M_PI / 180);
+        Tabla[2][x] = cos(x * M_PI / 180);
     }
 
-    for (x = 0; x < Jatekosok; x++) {
+    for (int x = 0; x < Jatekosok; x++) {
         PontLabel[x] = new TLabel(Form1);
 
         PontLabel[x]->Parent = Panel1;
@@ -244,10 +239,10 @@ void TForm1::FormCreate(TObject Sender)
         PontLabel[x]->Left = 75;
         PontLabel[x]->Top = 66 * x - 50;
         PontLabel[x]->Font.Size = 40;
-        PontLabel[x]->AutoSize = True;
+        PontLabel[x]->AutoSize = true;
         PontLabel[x]->Alignment = taRightJustify;
         PontLabel[x]->Font.Color = Szinek[x];
-        PontLabel[x]->Transparent = True;
+        PontLabel[x]->Transparent = true;
         PontLabel[x]->Hide();
         PontLabel[x]->OnMouseDown = TForm::FormMouseDown;
         PontLabel[x]->OnMouseUp = TForm::FormMouseUp;
@@ -259,7 +254,7 @@ void TForm1::FormCreate(TObject Sender)
         PanelLabel[x]->Left = 106;
         PanelLabel[x]->Top = 20 * (x + 1);
         PanelLabel[x]->Font.Style = fsBold;
-        PanelLabel[x]->AutoSize = True;
+        PanelLabel[x]->AutoSize = true;
         PanelLabel[x]->Font.Color = Szinek[x];
         PanelLabel[x]->Hide();
         PanelLabel[x]->OnMouseDown = TForm::FormMouseDown;
@@ -272,23 +267,24 @@ void TForm1::FormCreate(TObject Sender)
         Jatekos[x].bmpVonal->Canvas.Pen.Color = Szinek[x];
         Jatekos[x].bmpVonal->Canvas.Brush.Color = Szinek[x];
         Jatekos[x].bmpVonal->Canvas.Rectangle(0, 0, Vastagsag, Vastagsag);
-    }
 
-    Jatekos[x].bmpHalalfej = new TBitmap();
+        Jatekos[x].bmpHalalfej = new TBitmap();
 
-    Jatekos[x].bmpHalalfej->Width = 50;
-    Jatekos[x].bmpHalalfej->Height = 48;
-    ImageList1.GetBitmap(0, Jatekos[x].bmpHalalfej);
-    Jatekos[x].bmpHalalfej->Transparent = True;
+        Jatekos[x].bmpHalalfej->Width = 50;
+        Jatekos[x].bmpHalalfej->Height = 48;
+        ImageList1.GetBitmap(0, Jatekos[x].bmpHalalfej);
+        Jatekos[x].bmpHalalfej->Transparent = true;
 
-    for (a = 0; a < Jatekos[x].bmpHalalfej->Width; a++) {
-        for (b = 0; b < Jatekos[x].bmpHalalfej->Height; b++) {
-            if (Jatekos[x].bmpHalalfej->Canvas.Pixels[a][b] == clWhite) {
-                Jatekos[x].bmpHalalfej->Canvas.Pixels[a][b] = Szinek[x];
+        for (int a = 0; a < Jatekos[x].bmpHalalfej->Width; a++) {
+            for (int b = 0; b < Jatekos[x].bmpHalalfej->Height; b++) {
+                if (Jatekos[x].bmpHalalfej->Canvas.Pixels[a][b] == clWhite) {
+                    Jatekos[x].bmpHalalfej->Canvas.Pixels[a][b] = Szinek[x];
+                }
             }
         }
+
+        Jatekos[x].Halalfej.Idozites = 0;
     }
-    Jatekos[x].Halalfej.Idozites = 0;
 
     bmpVonalFekete = new TBitmap();
 
@@ -320,9 +316,9 @@ void TForm1::FormCreate(TObject Sender)
     PuffBitmap0->Canvas.Brush.Color = clBlack;
     PuffBitmap0->Canvas.Pen.Width = 2;
     PuffBitmap0->Canvas.Ellipse(0,0,19,19);
-    PuffBitmap0->Transparent = True;
+    PuffBitmap0->Transparent = true;
 
-    for (x = 1; x <= Jatekosok; x++) {
+    for (int x = 1; x <= Jatekosok; x++) {
         Jatekos[x].PuffBitmap = new TBitmap();
 
         Jatekos[x].PuffBitmap->Width = 19;
@@ -333,7 +329,7 @@ void TForm1::FormCreate(TObject Sender)
         Jatekos[x].PuffBitmap->Canvas.Brush.Color = Szinek[x];
         Jatekos[x].PuffBitmap->Canvas.Pen.Width = 2;
         Jatekos[x].PuffBitmap->Canvas.Ellipse(0, 0, 19, 19);
-        Jatekos[x].PuffBitmap->Transparent = True;
+        Jatekos[x].PuffBitmap->Transparent = true;
     }
 
     Randomize();
@@ -362,25 +358,21 @@ void TForm1::FormCreate(TObject Sender)
     Jatekos[6].Gomb[2] = VK_MULTIPLY;
     Jatekos[6].Gomb[3] = VK_SUBTRACT;
 
-    UresImage(True, AktualisMod.VanKeret);
+    UresImage(true, AktualisMod.VanKeret);
 }
 
-void TForm1::UresImage(Boolean Torol, Boolean VanKeret) {
-    Integer x;
-    Integer y;
-    Integer a;
-    Integer l;
-    TPoint p;
-
+void TForm1::UresImage(bool Torol, bool VanKeret)
+{
     if (Torol) {
         BitKep->Canvas.Brush.Color = clBlack;
         BitKep->Canvas.Rectangle(-1, -1, KepSzeles + 1, KepMagas + 1);
     } else { // az arrSzurkePixelek tömbben tárolt koordinátákat átszínezzük
-        l = Length(arrSzurkePixelek);
-        for (a = l - 1; a >= 0; a--) {
-            p = arrSzurkePixelek[a];
-            for (x = p.X + Vastagsag - 1; x >= p.X; x--) {
-                for (y = p.Y + Vastagsag - 1; x >= p.Y; y--) {
+        int l = Length(arrSzurkePixelek);
+
+        for (int a = l - 1; a >= 0; a--) {
+            TPoint p = arrSzurkePixelek[a];
+            for (int x = p.X + Vastagsag - 1; x >= p.X; x--) {
+                for (int y = p.Y + Vastagsag - 1; x >= p.Y; y--) {
                     if (BitKep->Canvas.Pixels[x][y] != clBlack) {
                         BitKep->Canvas.Pixels[x][y] = clSilver;
                     }
@@ -389,6 +381,7 @@ void TForm1::UresImage(Boolean Torol, Boolean VanKeret) {
             SetLength(arrSzurkePixelek, 0);
             SetLength(arrLyukak, 0);
         }
+
         if (VanKeret) { // újrarajzoljuk a keretet
             BitKep->Canvas.Brush.Color = clWhite;
             BitKep->Canvas.Pen.Color = clWhite;
@@ -403,10 +396,10 @@ void TForm1::UresImage(Boolean Torol, Boolean VanKeret) {
 }
 
 void TForm1::Timer1Timer(TObject Sender) {
-    Byte a, b;
-    Integer p, q, x, y;
+    int a, b;
+    int p, q, x, y;
     TKettoSzin KettoSzin;
-    Boolean logi;
+    bool logi;
 
     Timer1.Tag = (Timer1.Tag + 1) % 70;
 
@@ -465,13 +458,13 @@ void TForm1::Timer1Timer(TObject Sender) {
                 SetLength(arrLyukak, p + 1);
                 arrLyukak[p].Pont = TPoint(x, y);
                 arrLyukak[p].Szog = Jatekos[a].Irany;
-                arrLyukak[p].Hasznalt = False;
+                arrLyukak[p].Hasznalt = false;
             }
 
             KettoSzin = SzineketSzamol(x, y, a);
 
             if ((KettoSzin.NemFekete>0) || (KettoSzin.SajatSzin>9) || (AktualisMod.VanKeret && ((x<=0) || (y<=0) || (x>=KepSzeles-Vastagsag) || (y>=KepMagas-Vastagsag)))) {
-                Jatekos[a].Engedett = False;
+                Jatekos[a].Engedett = false;
 
                 Jatekos[a].Halalfej.Coord_TopLeft = TPoint(x-25,y-24);
                 Jatekos[a].Halalfej.Idozites = 50;
@@ -479,16 +472,16 @@ void TForm1::Timer1Timer(TObject Sender) {
                 // a még élő játékosok pontokat kapnak
                 p = 0;
                 q = 0;
-                logi = True;
+                logi = true;
 
                 for (b = 1; b <= Jatekosok; b++) {
                     if (Jatekos[b].Engedett) {
                         if (logi) {
                             if (Jatekos[b].FegyverAktiv) {
-                                if (Sqr(Jatekos[b].Fegyver->X - Jatekos[a].HelyX) + Sqr(Jatekos[b].Fegyver->Y - Jatekos[a].HelyY) < 138)
+                                if (sqrt(Jatekos[b].Fegyver->X - Jatekos[a].HelyX) + sqrt(Jatekos[b].Fegyver->Y - Jatekos[a].HelyY) < 138)
                                 {
                                     Jatekos[b].Pont += 3;
-                                    logi = False;
+                                    logi = false;
                                 }
                             }
                         }
@@ -503,7 +496,7 @@ void TForm1::Timer1Timer(TObject Sender) {
 
                 if (p <= 1) {
                     // senki nincs már életben
-                    Timer1.Enabled = False;
+                    Timer1.Enabled = false;
                     if (q < (PanelJatszoEmberek - 1) * 25) {
                         NewRaceLabel.Show();
                     } else {
@@ -522,13 +515,13 @@ void TForm1::Timer1Timer(TObject Sender) {
                     if (vektor.Hasznalt) {
                         continue;
                     }
-                    q = Abs(vektor.Szog - Jatekos[a].Irany);
+                    q = abs(vektor.Szog - Jatekos[a].Irany);
                     if (q > 180) {
                         q = 360 - q;
                     }
-                    if ((Sqr(x - vektor.Pont.X) + Sqr(y - vektor.Pont.Y)) <= 46) {
+                    if ((sqrt(x - vektor.Pont.X) + sqrt(y - vektor.Pont.Y)) <= 46) {
                         if (q > 55) {
-                            arrLyukak[p].Hasznalt = True;
+                            arrLyukak[p].Hasznalt = true;
                             Jatekos[a].Pont++;
                             PontLabel[a]->Caption = IntToStr(Jatekos[a].Pont);
                         }
@@ -559,30 +552,27 @@ void TForm1::Timer1Timer(TObject Sender) {
     }
 }
 
-void TForm1::FormKeyDown(TObject Sender, Word Key, TShiftState Shift)
+void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
 {
-    Byte a;
-    Boolean l;
-
     if (Key == VK_ESCAPE) {
         if (Panel2.Visible) {
             Close();
         } else {
-            Timer1.Enabled = False;
+            Timer1.Enabled = false;
             PanelLabelHideAll();
         }
     }
 
     if (Key == VK_F10) {
-        l = Timer1.Enabled; // letároljuk a Timer állapotát...
-        Timer1.Enabled = False;
+        bool l = Timer1.Enabled; // letároljuk a Timer állapotát...
+        Timer1.Enabled = false;
         MessageBox(strSzabalyok, "Játékszabályok");
         Timer1.Enabled = l; // ...majd visszaállítjuk
     }
 
     //lekezeljük az esetleges mód-módosítást
     if (Panel2.Visible) {
-        a = 0;
+        int a = 0;
 
         if (Key == VK_F1) {
             a = 1;
@@ -625,7 +615,7 @@ void TForm1::FormKeyDown(TObject Sender, Word Key, TShiftState Shift)
     }
 
     if (Timer1.Enabled) {
-        for (a = 1; a <= Jatekosok; a++)
+        for (int a = 1; a <= Jatekosok; a++)
         {
             if (Key == Jatekos[a].Gomb[1]) {
                 Jatekos[a].Kanyar = -1;
@@ -641,16 +631,16 @@ void TForm1::FormKeyDown(TObject Sender, Word Key, TShiftState Shift)
 
     if ((Key = VK_SPACE) && NewRaceLabel.Visible) {
         UresImage(AktualisMod.UjMenetnelTorol, AktualisMod.VanKeret);
-        for (a = 1; a <= Jatekosok; a++) {
+        for (int a = 1; a <= Jatekosok; a++) {
             Jatekos[a].Engedett = PanelLabel[a]->Visible;
         }
         JatekosokatLerak();
         NewRaceLabel.Hide();
         UjMenet();
     }
-    
+
     if (Panel2.Visible) {
-        for (a = 1 ; a <= Jatekosok; a++) {
+        for (int a = 1 ; a <= Jatekosok; a++) {
             if (Key=Jatekos[a].Gomb[1]) {
                 PanelLabel[a]->Show();
             }
@@ -662,20 +652,18 @@ void TForm1::FormKeyDown(TObject Sender, Word Key, TShiftState Shift)
         if (Key == VK_SPACE)
         {
             PanelJatszoEmberek = 0;
-            for (a = 1; a <= Jatekosok; a++) {
+            for (int a = 1; a <= Jatekosok; a++) {
                 if (PanelLabel[a]->Visible) {
                     PanelJatszoEmberek++;
                 }
             }
 
-            if (PanelJatszoEmberek >= MinimalisJatekos)
-            {
+            if (PanelJatszoEmberek >= MinimalisJatekos) {
                 Panel2.Hide();
                 AktualisMod = JatekMod[GroupMod.Tag];
                 Lyukak_SzaggatasFele = (AktualisMod.SzaggatasTag + 70) / 2;
-                UresImage(True, AktualisMod.VanKeret); //új játéknál mindig töröljük a pályát
-                for (a = 1; a <= Jatekosok; a++)
-                {
+                UresImage(true, AktualisMod.VanKeret); //új játéknál mindig töröljük a pályát
+                for (int a = 1; a <= Jatekosok; a++) {
                     Jatekos[a].Engedett = PanelLabel[a]->Visible;
                     PontLabel[a]->Visible = Jatekos[a].Engedett;
                     Jatekos[a].Pont = AktualisMod.StartPont;
@@ -689,12 +677,10 @@ void TForm1::FormKeyDown(TObject Sender, Word Key, TShiftState Shift)
     }
 }
 
-void TForm1::FormKeyUp(TObject Sender, Word Key, TShiftState Shift)
+void TForm1::FormKeyUp(TObject Sender, int Key, TShiftState Shift)
 {
-    Byte a;
-
     if (Timer1.Enabled) {
-        for (a = 1; a <= Jatekosok; a++) {
+        for (int a = 1; a <= Jatekosok; a++) {
             if ((Key == Jatekos[a].Gomb[1]) && (Jatekos[a].Kanyar == -1)) {
                 Jatekos[a].Kanyar = 0;
             }
@@ -705,7 +691,7 @@ void TForm1::FormKeyUp(TObject Sender, Word Key, TShiftState Shift)
     }
 }
 
-void TForm1::FormMouseDown(TObject Sender, TMouseButton Button, TShiftState Shift, Integer X, Integer Y)
+void TForm1::FormMouseDown(TObject Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
 {
     if (Timer1.Enabled) {
         if (Button == mbLeft) {
@@ -716,7 +702,7 @@ void TForm1::FormMouseDown(TObject Sender, TMouseButton Button, TShiftState Shif
             NewFegyver(7);
         }
     }
-    
+
     if (Panel2.Visible)
     {
         if (Button = mbLeft) {
@@ -728,7 +714,7 @@ void TForm1::FormMouseDown(TObject Sender, TMouseButton Button, TShiftState Shif
     }
 }
 
-void TForm1::FormMouseUp(TObject Sender, TMouseButton Button, TShiftState Shift, Integer X, Integer Y)
+void TForm1::FormMouseUp(TObject Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
 {
     if (Timer1.Enabled)
     {
@@ -743,9 +729,7 @@ void TForm1::FormMouseUp(TObject Sender, TMouseButton Button, TShiftState Shift,
 
 void TForm1::FormClose(TObject Sender, TCloseAction Action)
 {
-    Byte a;
-
-    for (a = 1; a <= Jatekosok; a++) {
+    for (int a = 1; a <= Jatekosok; a++) {
         delete PontLabel[a];
         delete PanelLabel[a];
         delete Jatekos[a].bmpHalalfej;
@@ -760,22 +744,21 @@ void TForm1::FormClose(TObject Sender, TCloseAction Action)
 
 void TForm1::FormShow(TObject Sender)
 {
-    ShowCursor(False);
+    ShowCursor(false);
 }
 
 void TForm1::UjMenet()
 {
-    Byte a, b;
     BitKep->Canvas.Brush.Style = bsClear;
-    for (a = 1; a <= Jatekosok; a++) {
+    for (int a = 1; a <= Jatekosok; a++) {
         if (Jatekos[a].FegyverAktiv) {
             delete Jatekos[a].Fegyver;
         }
     }
 
-    for (a = 80; a >= 2; a--) {
+    for (int a = 80; a >= 2; a--) {
         BitKep->Canvas.Pen.Width = 2;
-        for (b = 1; b <= Jatekosok; b++) {
+        for (int b = 1; b <= Jatekosok; b++) {
             if (Jatekos[b].Engedett) {
                 BitKep->Canvas.Pen.Color = Szinek[b];
                 BitKep->Canvas.Ellipse(Round(Jatekos[b].HelyX - a), Round(Jatekos[b].HelyY - a), Round(Jatekos[b].HelyX + a), Round(Jatekos[b].HelyY + a));
@@ -786,7 +769,7 @@ void TForm1::UjMenet()
         Sleep(11);
         BitKep->Canvas.Pen.Color = clBlack;
         BitKep->Canvas.Pen.Width = 4;
-        for (b = 1; b <= Jatekosok; b++) {
+        for (int b = 1; b <= Jatekosok; b++) {
             if (Jatekos[b].Engedett) {
                 BitKep->Canvas.Ellipse(Round(Jatekos[b].HelyX - a), Round(Jatekos[b].HelyY - a), Round(Jatekos[b].HelyX + a), Round(Jatekos[b].HelyY + a));
             }
@@ -800,27 +783,27 @@ void TForm1::UjMenet()
 
     SetLength(arrSzurkePixelek, 0);
     Timer1.Tag = 0;
-    Timer1.Enabled = True;
+    Timer1.Enabled = true;
 }
 
 void TForm1::PanelLabelHideAll()
 {
-    for (Byte a = 1; a <= Jatekosok; a++) {
+    for (int a = 1; a <= Jatekosok; a++) {
         PanelLabel[a]->Hide();
     }
     NewRaceLabel.Hide();
     Panel2.Show();
 }
 
-Boolean TForm1::JatekosPozicioRendben()
+bool TForm1::JatekosPozicioRendben()
 {
-    Boolean Result = True;
+    bool Result = true;
 
-    for (Byte a = 1; a <= Jatekosok - 1; a++) {
-        for (Byte b = a + 1; b <= Jatekosok; b++) {
+    for (int a = 1; a <= Jatekosok - 1; a++) {
+        for (int b = a + 1; b <= Jatekosok; b++) {
             if (Jatekos[a].Engedett && Jatekos[b].Engedett) {
-                if (Sqr(Sqr(Jatekos[a].HelyX - Jatekos[b].HelyX) + Sqr(Jatekos[a].HelyY - Jatekos[b].HelyY)) < KepSzeles / 5) {
-                    Result = False;
+                if (sqrt(sqrt(Jatekos[a].HelyX - Jatekos[b].HelyX) + sqrt(Jatekos[a].HelyY - Jatekos[b].HelyY)) < KepSzeles / 5) {
+                    Result = false;
                 }
             }
         }
@@ -832,12 +815,12 @@ Boolean TForm1::JatekosPozicioRendben()
 void TForm1::JatekosokatLerak()
 {
     do {
-        for (Byte a = 1; a <= Jatekosok; a++) {
+        for (int a = 1; a <= Jatekosok; a++) {
             Jatekos[a].Irany = Random(360 / Fokok) * Fokok;
             Jatekos[a].HelyX = Random(KepSzeles - 240) + 120;
             Jatekos[a].HelyY = Random(KepMagas - 240) + 120;
             Jatekos[a].Kanyar = 0;
-            Jatekos[a].FegyverAktiv = False;
+            Jatekos[a].FegyverAktiv = false;
             Jatekos[a].Halalfej.Idozites = 0;
         }
     } while (!JatekosPozicioRendben());
@@ -846,7 +829,7 @@ void TForm1::JatekosokatLerak()
 void TForm1::PaintBoxRajzol()
 {
     BitKep2->Canvas.Draw(0, 0, BitKep);
-    for (Integer x = 1; x <= Jatekosok; x++) {
+    for (int x = 1; x <= Jatekosok; x++) {
         if (Jatekos[x].Halalfej.Idozites > 0) {
             BitKep2->Canvas.Draw(Jatekos[x].Halalfej.Coord_TopLeft.X, Jatekos[x].Halalfej.Coord_TopLeft.Y, Jatekos[x].bmpHalalfej);
             Jatekos[x].Halalfej.Idozites--;
