@@ -1,4 +1,5 @@
 #include "port.h"
+#include "gomb.h"
 
 // type
 
@@ -40,7 +41,7 @@ struct TVektor {
 };
 
 struct TJatekos {
-   int Gomb[3 + 1];
+   int Gomb[gombSzam];
    int Irany;
    int Kanyar;
    double HelyX;
@@ -336,29 +337,29 @@ void TForm1::FormCreate(TObject Sender)
 
     Randomize();
 
-    Jatekos[1].Gomb[1] = Ord('1');
-    Jatekos[1].Gomb[2] = Ord('Q');
-    Jatekos[1].Gomb[3] = Ord('2');
+    Jatekos[1].Gomb[bal] = Ord('1');
+    Jatekos[1].Gomb[jobb] = Ord('Q');
+    Jatekos[1].Gomb[loves] = Ord('2');
 
-    Jatekos[2].Gomb[1] = 17;
-    Jatekos[2].Gomb[2] = 18;
-    Jatekos[2].Gomb[3] = Ord('X');
+    Jatekos[2].Gomb[bal] = 17;
+    Jatekos[2].Gomb[jobb] = 18;
+    Jatekos[2].Gomb[loves] = Ord('X');
 
-    Jatekos[3].Gomb[1] = Ord('4');
-    Jatekos[3].Gomb[2] = Ord('5');
-    Jatekos[3].Gomb[3] = Ord('R');
+    Jatekos[3].Gomb[bal] = Ord('4');
+    Jatekos[3].Gomb[jobb] = Ord('5');
+    Jatekos[3].Gomb[loves] = Ord('R');
 
-    Jatekos[4].Gomb[1] = Ord('M');
-    Jatekos[4].Gomb[2] = 188;
-    Jatekos[4].Gomb[3] = Ord('K');
+    Jatekos[4].Gomb[bal] = Ord('M');
+    Jatekos[4].Gomb[jobb] = 188;
+    Jatekos[4].Gomb[loves] = Ord('K');
 
-    Jatekos[5].Gomb[1] = VK_LEFT;
-    Jatekos[5].Gomb[2] = VK_DOWN;
-    Jatekos[5].Gomb[3] = VK_UP;
+    Jatekos[5].Gomb[bal] = VK_LEFT;
+    Jatekos[5].Gomb[jobb] = VK_DOWN;
+    Jatekos[5].Gomb[loves] = VK_UP;
 
-    Jatekos[6].Gomb[1] = VK_DIVIDE;
-    Jatekos[6].Gomb[2] = VK_MULTIPLY;
-    Jatekos[6].Gomb[3] = VK_SUBTRACT;
+    Jatekos[6].Gomb[bal] = VK_DIVIDE;
+    Jatekos[6].Gomb[jobb] = VK_MULTIPLY;
+    Jatekos[6].Gomb[loves] = VK_SUBTRACT;
 
     UresImage(true, AktualisMod.VanKeret);
 }
@@ -619,13 +620,13 @@ void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
     if (Timer1.Enabled) {
         for (int a = 1; a <= Jatekosok; a++)
         {
-            if (Key == Jatekos[a].Gomb[1]) {
+            if (Key == Jatekos[a].Gomb[bal]) {
                 Jatekos[a].Kanyar = -1;
             }
-            if (Key == Jatekos[a].Gomb[2]) {
+            if (Key == Jatekos[a].Gomb[jobb]) {
                 Jatekos[a].Kanyar = 1;
             }
-            if (Key == Jatekos[a].Gomb[3]) {
+            if (Key == Jatekos[a].Gomb[loves]) {
                 NewFegyver(a);
             }
         }
@@ -643,10 +644,10 @@ void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
 
     if (Panel2.Visible) {
         for (int a = 1 ; a <= Jatekosok; a++) {
-            if (Key=Jatekos[a].Gomb[1]) {
+            if (Key=Jatekos[a].Gomb[bal]) {
                 PanelLabel[a]->Show();
             }
-            if (Key=Jatekos[a].Gomb[2]) {
+            if (Key=Jatekos[a].Gomb[jobb]) {
                 PanelLabel[a]->Hide();
             }
         }
@@ -683,10 +684,10 @@ void TForm1::FormKeyUp(TObject Sender, int Key, TShiftState Shift)
 {
     if (Timer1.Enabled) {
         for (int a = 1; a <= Jatekosok; a++) {
-            if ((Key == Jatekos[a].Gomb[1]) && (Jatekos[a].Kanyar == -1)) {
+            if ((Key == Jatekos[a].Gomb[bal]) && (Jatekos[a].Kanyar == -1)) {
                 Jatekos[a].Kanyar = 0;
             }
-            if ((Key == Jatekos[a].Gomb[2]) && (Jatekos[a].Kanyar == 1)) {
+            if ((Key == Jatekos[a].Gomb[jobb]) && (Jatekos[a].Kanyar == 1)) {
                 Jatekos[a].Kanyar = 0;
             }
         }
