@@ -65,6 +65,11 @@ enum TColor
     clSilver
 };
 
+enum TShiftState
+{
+    state
+};
+
 // class
 class TObject
 {
@@ -81,6 +86,8 @@ public:
     TPoint();
     TPoint(int x, int y);
 };
+
+class TBitmap;
 
 class TCanvas
 {
@@ -111,7 +118,7 @@ public:
     TPixelFormat PixelFormat;
 };
 
-class TForm
+class TForm : public TObject
 {
 public:
     struct
@@ -137,8 +144,9 @@ public:
 class TLabel : public TObject
 {
 public:
-    TObject &Parent;
+    TObject Parent;
     string Caption;
+    TLabel(){}
     TLabel(TForm &form);
 
     int Left;
@@ -170,10 +178,6 @@ public:
     int Tag;
 };
 
-class TShiftState
-{
-};
-
 class TCloseAction
 {
 };
@@ -187,7 +191,8 @@ public:
 class TTimer
 {
 public:
-    TTimer(TForm1 form) {}
+    TTimer() {}
+    TTimer(TObject& parent) {}
     int Interval;
     void (TTriggerable::*OnTimer)(TObject);
     bool Enabled;

@@ -55,7 +55,7 @@ struct TJatekos {
    TBitmap* PuffBitmap;
 };
 
-class TForm1 : TForm
+class TForm1 : public TForm
 {
 public:
     TTimer Timer1;
@@ -102,6 +102,8 @@ public:
     void JatekosokatLerak();
     void PaintBoxRajzol();
     void PaintBoxOnPaint(TObject Sender);
+    
+    TForm1(){}
 };
 
 // const
@@ -141,8 +143,8 @@ TLabel* PanelLabel[Jatekosok];
 TBitmap* BitKep;
 TBitmap* BitKep2;
 TBitmap* bmpVonalFekete;
-TPoint arrSzurkePixelek[];
-TVektor arrLyukak[];
+TPoint arrSzurkePixelek[] = {};
+TVektor arrLyukak[] = {};
 int Lyukak_SzaggatasFele; // a szaggatás középpontjának a Timer.Tag-je
 TJatekMod AktualisMod;
 TBitmap* PuffBitmap0;
@@ -167,7 +169,7 @@ TFegyver::TFegyver(int x, int y, int Irany, int Tulaj) : Timer(Form1)
     Jatekos[Szam].FegyverAktiv = true;
 
     Timer.Interval = Form1.Timer1.Interval;
-    Timer.OnTimer = TTriggerable::OnTimer;
+    Timer.OnTimer = &TTriggerable::OnTimer;
 }
 
 void TFegyver::OnTimer(TObject Sender)
@@ -244,21 +246,21 @@ void TForm1::FormCreate(TObject Sender)
         PontLabel[x]->Font.Color = Szinek[x];
         PontLabel[x]->Transparent = true;
         PontLabel[x]->Hide();
-        PontLabel[x]->OnMouseDown = TForm::FormMouseDown;
-        PontLabel[x]->OnMouseUp = TForm::FormMouseUp;
+        PontLabel[x]->OnMouseDown = &TForm::FormMouseDown;
+        PontLabel[x]->OnMouseUp = &TForm::FormMouseUp;
 
         PanelLabel[x] = new TLabel(Form1);
 
         PanelLabel[x]->Parent = GroupBox2;
-        PanelLabel[x]->Caption = 'Aktív';
+        PanelLabel[x]->Caption = "Aktív";
         PanelLabel[x]->Left = 106;
         PanelLabel[x]->Top = 20 * (x + 1);
         PanelLabel[x]->Font.Style = fsBold;
         PanelLabel[x]->AutoSize = true;
         PanelLabel[x]->Font.Color = Szinek[x];
         PanelLabel[x]->Hide();
-        PanelLabel[x]->OnMouseDown = TForm::FormMouseDown;
-        PanelLabel[x]->OnMouseUp = TForm::FormMouseUp;
+        PanelLabel[x]->OnMouseDown = &TForm::FormMouseDown;
+        PanelLabel[x]->OnMouseUp = &TForm::FormMouseUp;
 
         Jatekos[x].bmpVonal = new TBitmap();
 
@@ -392,7 +394,7 @@ void TForm1::UresImage(bool Torol, bool VanKeret)
         }
     }
 
-    PaintBoxRajzol;
+    PaintBoxRajzol();
 }
 
 void TForm1::Timer1Timer(TObject Sender) {
@@ -841,4 +843,9 @@ void TForm1::PaintBoxRajzol()
 void TForm1::PaintBoxOnPaint(TObject Sender)
 {
     PaintBoxRajzol();
+}
+
+int main()
+{
+    return 0;
 }
