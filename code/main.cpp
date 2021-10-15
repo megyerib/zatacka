@@ -134,7 +134,7 @@ const TJatekMod JatekMod[4] = {
 // var
 
 TForm1 Form1;
-TJatekos Jatekos[Jatekosok + 1];
+TJatekos Jatekos[Jatekosok];
 int KepSzeles;
 int KepMagas;
 double Tabla[2 + 1][360];
@@ -321,7 +321,7 @@ void TForm1::FormCreate(TObject Sender)
     PuffBitmap0->Canvas.Ellipse(0,0,19,19);
     PuffBitmap0->Transparent = true;
 
-    for (int x = 1; x <= Jatekosok; x++) {
+    for (int x = 0; x < Jatekosok; x++) {
         Jatekos[x].PuffBitmap = new TBitmap();
 
         Jatekos[x].PuffBitmap->Width = 19;
@@ -337,29 +337,29 @@ void TForm1::FormCreate(TObject Sender)
 
     Randomize();
 
-    Jatekos[1].Gomb[bal] = Ord('1');
-    Jatekos[1].Gomb[jobb] = Ord('Q');
-    Jatekos[1].Gomb[loves] = Ord('2');
+    Jatekos[0].Gomb[bal] = Ord('1');
+    Jatekos[0].Gomb[jobb] = Ord('Q');
+    Jatekos[0].Gomb[loves] = Ord('2');
 
-    Jatekos[2].Gomb[bal] = 17;
-    Jatekos[2].Gomb[jobb] = 18;
-    Jatekos[2].Gomb[loves] = Ord('X');
+    Jatekos[1].Gomb[bal] = 17;
+    Jatekos[1].Gomb[jobb] = 18;
+    Jatekos[1].Gomb[loves] = Ord('X');
 
-    Jatekos[3].Gomb[bal] = Ord('4');
-    Jatekos[3].Gomb[jobb] = Ord('5');
-    Jatekos[3].Gomb[loves] = Ord('R');
+    Jatekos[2].Gomb[bal] = Ord('4');
+    Jatekos[2].Gomb[jobb] = Ord('5');
+    Jatekos[2].Gomb[loves] = Ord('R');
 
-    Jatekos[4].Gomb[bal] = Ord('M');
-    Jatekos[4].Gomb[jobb] = 188;
-    Jatekos[4].Gomb[loves] = Ord('K');
+    Jatekos[3].Gomb[bal] = Ord('M');
+    Jatekos[3].Gomb[jobb] = 188;
+    Jatekos[3].Gomb[loves] = Ord('K');
 
-    Jatekos[5].Gomb[bal] = VK_LEFT;
-    Jatekos[5].Gomb[jobb] = VK_DOWN;
-    Jatekos[5].Gomb[loves] = VK_UP;
+    Jatekos[4].Gomb[bal] = VK_LEFT;
+    Jatekos[4].Gomb[jobb] = VK_DOWN;
+    Jatekos[4].Gomb[loves] = VK_UP;
 
-    Jatekos[6].Gomb[bal] = VK_DIVIDE;
-    Jatekos[6].Gomb[jobb] = VK_MULTIPLY;
-    Jatekos[6].Gomb[loves] = VK_SUBTRACT;
+    Jatekos[5].Gomb[bal] = VK_DIVIDE;
+    Jatekos[5].Gomb[jobb] = VK_MULTIPLY;
+    Jatekos[5].Gomb[loves] = VK_SUBTRACT;
 
     UresImage(true, AktualisMod.VanKeret);
 }
@@ -406,7 +406,7 @@ void TForm1::Timer1Timer(TObject Sender) {
 
     Timer1.Tag = (Timer1.Tag + 1) % 70;
 
-    for (a = 1; a <= Jatekosok; a++) {
+    for (a = 0; a < Jatekosok; a++) {
         if (!Jatekos[a].Engedett) {
             continue; // nem aktív játékos átlépése
         }
@@ -477,7 +477,7 @@ void TForm1::Timer1Timer(TObject Sender) {
                 q = 0;
                 logi = true;
 
-                for (b = 1; b <= Jatekosok; b++) {
+                for (b = 0; b < Jatekosok; b++) {
                     if (Jatekos[b].Engedett) {
                         if (logi) {
                             if (Jatekos[b].FegyverAktiv) {
@@ -618,7 +618,7 @@ void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
     }
 
     if (Timer1.Enabled) {
-        for (int a = 1; a <= Jatekosok; a++)
+        for (int a = 0; a < Jatekosok; a++)
         {
             if (Key == Jatekos[a].Gomb[bal]) {
                 Jatekos[a].Kanyar = -1;
@@ -634,7 +634,7 @@ void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
 
     if ((Key = VK_SPACE) && NewRaceLabel.Visible) {
         UresImage(AktualisMod.UjMenetnelTorol, AktualisMod.VanKeret);
-        for (int a = 1; a <= Jatekosok; a++) {
+        for (int a = 0; a < Jatekosok; a++) {
             Jatekos[a].Engedett = PanelLabel[a]->Visible;
         }
         JatekosokatLerak();
@@ -643,7 +643,7 @@ void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
     }
 
     if (Panel2.Visible) {
-        for (int a = 1 ; a <= Jatekosok; a++) {
+        for (int a = 0; a < Jatekosok; a++) {
             if (Key=Jatekos[a].Gomb[bal]) {
                 PanelLabel[a]->Show();
             }
@@ -655,7 +655,7 @@ void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
         if (Key == VK_SPACE)
         {
             PanelJatszoEmberek = 0;
-            for (int a = 1; a <= Jatekosok; a++) {
+            for (int a = 0; a < Jatekosok; a++) {
                 if (PanelLabel[a]->Visible) {
                     PanelJatszoEmberek++;
                 }
@@ -666,7 +666,7 @@ void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
                 AktualisMod = JatekMod[GroupMod.Tag];
                 Lyukak_SzaggatasFele = (AktualisMod.SzaggatasTag + 70) / 2;
                 UresImage(true, AktualisMod.VanKeret); //új játéknál mindig töröljük a pályát
-                for (int a = 1; a <= Jatekosok; a++) {
+                for (int a = 0; a < Jatekosok; a++) {
                     Jatekos[a].Engedett = PanelLabel[a]->Visible;
                     PontLabel[a]->Visible = Jatekos[a].Engedett;
                     Jatekos[a].Pont = AktualisMod.StartPont;
@@ -683,7 +683,7 @@ void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
 void TForm1::FormKeyUp(TObject Sender, int Key, TShiftState Shift)
 {
     if (Timer1.Enabled) {
-        for (int a = 1; a <= Jatekosok; a++) {
+        for (int a = 0; a < Jatekosok; a++) {
             if ((Key == Jatekos[a].Gomb[bal]) && (Jatekos[a].Kanyar == -1)) {
                 Jatekos[a].Kanyar = 0;
             }
@@ -698,9 +698,9 @@ void TForm1::FormMouseDown(TObject Sender, TMouseButton Button, TShiftState Shif
 {
     if (Timer1.Enabled) {
         if (Button == mbLeft) {
-            Jatekos[7].Kanyar = -1;
+            Jatekos[6].Kanyar = -1;
         } else if (Button == mbRight) {
-            Jatekos[7].Kanyar = 1;
+            Jatekos[6].Kanyar = 1;
         } else if (Button == mbMiddle) {
             NewFegyver(7);
         }
@@ -721,18 +721,18 @@ void TForm1::FormMouseUp(TObject Sender, TMouseButton Button, TShiftState Shift,
 {
     if (Timer1.Enabled)
     {
-        if ((Button = mbLeft) && (Jatekos[7].Kanyar = -1)) {
-            Jatekos[7].Kanyar = 0;
+        if ((Button = mbLeft) && (Jatekos[6].Kanyar = -1)) {
+            Jatekos[6].Kanyar = 0;
         }
-        if ((Button = mbRight) && (Jatekos[7].Kanyar = 1)) {
-            Jatekos[7].Kanyar = 0;
+        if ((Button = mbRight) && (Jatekos[6].Kanyar = 1)) {
+            Jatekos[6].Kanyar = 0;
         }
     }
 }
 
 void TForm1::FormClose(TObject Sender, TCloseAction Action)
 {
-    for (int a = 1; a <= Jatekosok; a++) {
+    for (int a = 0; a < Jatekosok; a++) {
         delete PontLabel[a];
         delete PanelLabel[a];
         delete Jatekos[a].bmpHalalfej;
@@ -753,7 +753,7 @@ void TForm1::FormShow(TObject Sender)
 void TForm1::UjMenet()
 {
     BitKep->Canvas.Brush.Style = bsClear;
-    for (int a = 1; a <= Jatekosok; a++) {
+    for (int a = 0; a < Jatekosok; a++) {
         if (Jatekos[a].FegyverAktiv) {
             delete Jatekos[a].Fegyver;
         }
@@ -761,7 +761,7 @@ void TForm1::UjMenet()
 
     for (int a = 80; a >= 2; a--) {
         BitKep->Canvas.Pen.Width = 2;
-        for (int b = 1; b <= Jatekosok; b++) {
+        for (int b = 0; b < Jatekosok; b++) {
             if (Jatekos[b].Engedett) {
                 BitKep->Canvas.Pen.Color = Szinek[b];
                 BitKep->Canvas.Ellipse(Round(Jatekos[b].HelyX - a), Round(Jatekos[b].HelyY - a), Round(Jatekos[b].HelyX + a), Round(Jatekos[b].HelyY + a));
@@ -772,7 +772,7 @@ void TForm1::UjMenet()
         Sleep(11);
         BitKep->Canvas.Pen.Color = clBlack;
         BitKep->Canvas.Pen.Width = 4;
-        for (int b = 1; b <= Jatekosok; b++) {
+        for (int b = 0; b < Jatekosok; b++) {
             if (Jatekos[b].Engedett) {
                 BitKep->Canvas.Ellipse(Round(Jatekos[b].HelyX - a), Round(Jatekos[b].HelyY - a), Round(Jatekos[b].HelyX + a), Round(Jatekos[b].HelyY + a));
             }
@@ -791,7 +791,7 @@ void TForm1::UjMenet()
 
 void TForm1::PanelLabelHideAll()
 {
-    for (int a = 1; a <= Jatekosok; a++) {
+    for (int a = 0; a < Jatekosok; a++) {
         PanelLabel[a]->Hide();
     }
     NewRaceLabel.Hide();
@@ -802,8 +802,8 @@ bool TForm1::JatekosPozicioRendben()
 {
     bool Result = true;
 
-    for (int a = 1; a <= Jatekosok - 1; a++) {
-        for (int b = a + 1; b <= Jatekosok; b++) {
+    for (int a = 0; a < Jatekosok - 1; a++) {
+        for (int b = a + 1; b < Jatekosok; b++) {
             if (Jatekos[a].Engedett && Jatekos[b].Engedett) {
                 if (sqrt(sqrt(Jatekos[a].HelyX - Jatekos[b].HelyX) + sqrt(Jatekos[a].HelyY - Jatekos[b].HelyY)) < KepSzeles / 5) {
                     Result = false;
@@ -818,7 +818,7 @@ bool TForm1::JatekosPozicioRendben()
 void TForm1::JatekosokatLerak()
 {
     do {
-        for (int a = 1; a <= Jatekosok; a++) {
+        for (int a = 0; a < Jatekosok; a++) {
             Jatekos[a].Irany = Random(360 / Fokok) * Fokok;
             Jatekos[a].HelyX = Random(KepSzeles - 240) + 120;
             Jatekos[a].HelyY = Random(KepMagas - 240) + 120;
@@ -832,7 +832,7 @@ void TForm1::JatekosokatLerak()
 void TForm1::PaintBoxRajzol()
 {
     BitKep2->Canvas.Draw(0, 0, BitKep);
-    for (int x = 1; x <= Jatekosok; x++) {
+    for (int x = 0; x < Jatekosok; x++) {
         if (Jatekos[x].Halalfej.Idozites > 0) {
             BitKep2->Canvas.Draw(Jatekos[x].Halalfej.Coord_TopLeft.X, Jatekos[x].Halalfej.Coord_TopLeft.Y, Jatekos[x].bmpHalalfej);
             Jatekos[x].Halalfej.Idozites--;
