@@ -456,13 +456,13 @@ void TForm1::Timer1Timer(TObject Sender) {
             y = Round(Jatekos[a].HelyY);
 
             // ha a szaggatás felezőpontjánál vagyunk, akkor letároljuk
-            if (Timer1.Tag == Lyukak_SzaggatasFele) {
+            /*if (Timer1.Tag == Lyukak_SzaggatasFele) {
                 p = Length(arrLyukak);
                 SetLength(arrLyukak, p + 1);
                 arrLyukak[p].Pont = TPoint(x, y);
                 arrLyukak[p].Szog = Jatekos[a].Irany;
                 arrLyukak[p].Hasznalt = false;
-            }
+            }*/
 
             KettoSzin = SzineketSzamol(x, y, a);
 
@@ -510,7 +510,7 @@ void TForm1::Timer1Timer(TObject Sender) {
                 }
             }
 
-            if (AktualisMod.LyukPont) {
+            /*if (AktualisMod.LyukPont) {
                 p = Length(arrLyukak); // ha átmegy egy lyukon, akkor pontot kap
                 while (p > 0) {
                     p--;
@@ -530,7 +530,7 @@ void TForm1::Timer1Timer(TObject Sender) {
                         }
                     }
                 }
-            }
+            }*/
 
             //kirajzoljuk a vonalat színesen
             if ((x < 10) || (x > KepSzeles - 10) || (y < 10) || (y > KepMagas - 10)) {
