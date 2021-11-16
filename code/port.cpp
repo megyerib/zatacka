@@ -1,18 +1,8 @@
 #include "port.h"
 
-int Length(void *arr)
-{
-    return 0;
-}
-
-void SetLength(void *arr, int len)
-{
-
-}
-
 int Max(int a, int b)
 {
-    return 0;
+    return (a > b) ? a : b;
 }
 
 void MessageBox(string szoveg, string cim)

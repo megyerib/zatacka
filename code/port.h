@@ -1,8 +1,9 @@
 #pragma once
 #include <string>
 #include <cmath>
+#include <vector>
 
-using std::string;
+using namespace std;
 
 // define
 
@@ -202,8 +203,18 @@ public:
 
 // function
 
-int Length(void *arr);
-void SetLength(void *arr, int len);
+template<typename T>
+int Length(vector<T>& vec)
+{
+    return vec.size();
+}
+
+template<typename T>
+void SetLength(vector<T>& vec, int len)
+{
+    vec.reserve(len);
+}
+
 int Max(int a, int b);
 void MessageBox(string szoveg, string cim);
 void ProcessMessages();

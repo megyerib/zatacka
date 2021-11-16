@@ -1,5 +1,8 @@
 #include "port.h"
 #include "gomb.h"
+#include <vector>
+
+using namespace std;
 
 // type
 
@@ -46,14 +49,14 @@ struct TJatekos {
    int Kanyar;
    double HelyX;
    double HelyY;
-   bool Engedett;
+   bool Engedett; // gyk. Enabled
    bool FegyverAktiv;
    int Pont;
    TFegyver* Fegyver;
    THalalfej Halalfej;
    TBitmap* bmpVonal;
    TBitmap* bmpHalalfej;
-   TBitmap* PuffBitmap;
+   TBitmap* PuffBitmap; // erre van kirajzolva a golyó
 };
 
 class TForm1 : public TForm
@@ -144,8 +147,8 @@ TLabel* PanelLabel[Jatekosok];
 TBitmap* BitKep;
 TBitmap* BitKep2;
 TBitmap* bmpVonalFekete;
-TPoint arrSzurkePixelek[] = {};
-TVektor arrLyukak[] = {};
+vector<TPoint> arrSzurkePixelek; // Falnélküli módban itt tároljuk a bejárt pixeleket
+vector<TVektor> arrLyukak;
 int Lyukak_SzaggatasFele; // a szaggatás középpontjának a Timer.Tag-je
 TJatekMod AktualisMod;
 TBitmap* PuffBitmap0;
@@ -265,7 +268,7 @@ void TForm1::FormCreate(TObject Sender)
 
         Jatekos[x].bmpVonal = new TBitmap();
 
-        Jatekos[x].bmpVonal->Width = Vastagsag;
+        Jatekos[x].bmpVonal->Width = Vastagsag; // Rajzolunk egy Vastagsag * Vastagsag méretű négyzetet.
         Jatekos[x].bmpVonal->Height = Vastagsag;
         Jatekos[x].bmpVonal->Canvas.Pen.Color = Szinek[x];
         Jatekos[x].bmpVonal->Canvas.Brush.Color = Szinek[x];
