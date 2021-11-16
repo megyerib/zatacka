@@ -1,6 +1,7 @@
 #include "port.h"
 #include "gomb.h"
 #include <vector>
+#include <SDL.h>
 
 using namespace std;
 
