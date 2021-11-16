@@ -141,7 +141,6 @@ TForm1 Form1;
 TJatekos Jatekos[Jatekosok];
 int KepSzeles;
 int KepMagas;
-double Tabla[2 + 1][360];
 int PanelJatszoEmberek;
 TLabel* PontLabel[Jatekosok];
 TLabel* PanelLabel[Jatekosok];
@@ -168,8 +167,8 @@ void TForm1::NewFegyver(int a)
 TFegyver::TFegyver(int x, int y, int Irany, int Tulaj) : Timer(Form1)
 {
     Szog = Irany;
-    X = x + Tabla[2][Szog] * 18;
-    Y = y - Tabla[1][Szog] * 18;
+    X = x + cos_fok(Szog) * 18;
+    Y = y - sin_fok(Szog) * 18;
     Szam = Tulaj;
     Jatekos[Szam].FegyverAktiv = true;
 
@@ -184,8 +183,8 @@ void TFegyver::OnTimer(TObject Sender)
         Timer.Enabled = false;
         return;
     }
-    X = X + Tabla[2][Szog] * FegyverSebesseg;
-    Y = Y - Tabla[1][Szog] * FegyverSebesseg;
+    X = X + cos_fok(Szog) * FegyverSebesseg;
+    Y = Y - sin_fok(Szog) * FegyverSebesseg;
     Timer.Tag++;
     BitKep->Canvas.Draw(Round(X) - 9, Round(Y) - 9, Jatekos[Szam].PuffBitmap);
     if ((X < -10) || (Y < -10) || (X > KepSzeles + 10) || (Y > KepMagas + 10)) {
@@ -232,11 +231,6 @@ void TForm1::FormCreate(TObject Sender)
     KepMagas = Screen.Height;
 
     PanelJatszoEmberek = 0;
-
-    for (int x = 0; x < 360; x++) {
-        Tabla[1][x] = sin(x * M_PI / 180);
-        Tabla[2][x] = cos(x * M_PI / 180);
-    }
 
     for (int x = 0; x < Jatekosok; x++) {
         PontLabel[x] = new TLabel(Form1);
@@ -438,8 +432,8 @@ void TForm1::Timer1Timer(TObject Sender) {
             }
 
             // kiszámítjuk az új koordinátákat
-            Jatekos[a].HelyX += Ut * Tabla[2][Jatekos[a].Irany];
-            Jatekos[a].HelyY -= Ut * Tabla[1][Jatekos[a].Irany];
+            Jatekos[a].HelyX += Ut * cos_fok(Jatekos[a].Irany);
+            Jatekos[a].HelyY -= Ut * sin_fok(Jatekos[a].Irany);
 
             if (!AktualisMod.VanKeret) {
                 if (Jatekos[a].HelyX >= KepSzeles) {

@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include <cmath>
 #include <vector>
 
 using namespace std;
@@ -224,3 +223,6 @@ void Randomize();
 int Ord(char c);
 string IntToStr(int i);
 int Round(double r);
+
+double sin_fok(double x);
+double cos_fok(double x);

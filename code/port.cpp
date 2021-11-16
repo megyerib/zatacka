@@ -1,4 +1,5 @@
 #include "port.h"
+#include <cmath>
 
 int Max(int a, int b)
 {
@@ -43,6 +44,16 @@ string IntToStr(int i)
 int Round(double r)
 {
     return 0;
+}
+
+double sin_fok(double x)
+{
+    return sin(x * M_PI / 180);
+}
+
+double cos_fok(double x)
+{
+    return cos(x * M_PI / 180);
 }
 
 void TCanvas::Draw(int, int, TBitmap*)
