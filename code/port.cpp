@@ -56,6 +56,11 @@ double cos_fok(double x)
     return cos(x * M_PI / 180);
 }
 
+double sqr(double x)
+{
+    return x * x;
+}
+
 void TCanvas::Draw(int, int, TBitmap*)
 {
 
