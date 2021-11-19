@@ -196,7 +196,7 @@ public:
     int Interval;
     void (TTriggerable::*OnTimer)(TObject);
     bool Enabled;
-    int Tag; // Ez valami visszaszámláló lesz
+    int Tag; // Ez valami számláló lesz
     void Free();
 };
 
@@ -216,8 +216,6 @@ void SetLength(vector<T>& vec, int len)
 
 int Max(int a, int b);
 void MessageBox(string szoveg, string cim);
-// Gondolom, valami delphis függvény, később ki lehet szedni.
-void ProcessMessages();
 void Sleep(int ms);
 int Random(int to);
 void Randomize();

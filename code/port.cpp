@@ -11,11 +11,6 @@ void MessageBox(string szoveg, string cim)
 
 }
 
-void ProcessMessages()
-{
-
-}
-
 void Sleep(int ms)
 {
 
@@ -38,12 +33,12 @@ int Ord(char c)
 
 string IntToStr(int i)
 {
-    return "";
+    return string("%d", i);
 }
 
 int Round(double r)
 {
-    return 0;
+    return (int)(r + 0.5);
 }
 
 double sin_fok(double x)

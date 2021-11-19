@@ -108,7 +108,6 @@ public:
     void FormMouseDown(TObject Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
     void FormMouseUp(TObject Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
     void FormClose(TObject Sender, TCloseAction Action);
-    void FormShow(TObject Sender);
     void UjMenet();
     void PanelLabelHideAll();
     static bool JatekosPozicioRendben();
@@ -123,8 +122,8 @@ public:
 
 const int Jatekosok = 7; // Játékosok max száma
 const TColor Szinek[Jatekosok] = {clRed,clYellow,clBlue,clOlive,clLime,clMagenta,clAqua}; // Játékosok színei
-const int Ut = 3; // Út/tick (játékos sebessége)
-const int FegyverSebesseg = 1.3 * Ut; // Golyó sebessége
+const double Ut = 3; // Út/tick (játékos sebessége)
+const double FegyverSebesseg = 1.3 * Ut; // Golyó sebessége
 const int Fokok = 4; // Ekkora szögben fordul egy játékos
 const int Vastagsag = 4; // nem lehet több 10-nél, különben a falnélküli mód hibásan viselkedhet
 const int VastagsagDelta = 2; // (Vastagsag-1) div 2
@@ -156,11 +155,11 @@ const int KeretSzeles = 7; // Vastag keret szélessége
 
 // var
 
-TForm1 Form1;
+TForm1 Form1; // Játéktér form. Ezen belül a Panel1 az eredményjelző, a Panel2 a menü.
 TJatekos Jatekos[Jatekosok];
-int KepSzeles;
-int KepMagas;
-int PanelJatszoEmberek; // Ennyien kezdtek el játszani (ebből számoljuk ki a nyeréshez szükséges pontszámot stb.)
+int KepSzeles; // Képernyő szélessége - jobb oldali 120 pixeles eredményjelző
+int KepMagas; // Képernyő magassága
+int PanelJatszoEmberek; // Összes résztvevő (ebből számoljuk ki a nyeréshez szükséges pontszámot stb.)
 TLabel* PontLabel[Jatekosok]; // Ez mutatja jobb oldalon a pontszámot
 TLabel* PanelLabel[Jatekosok]; // Ez mutatja a menüben, hogy aktív-e egy játékos
 TBitmap* BitKep; // Alap bitkép
@@ -199,6 +198,8 @@ TFegyver::TFegyver(int x, int y, int Irany, int Tulaj) : Timer(Form1)
     Timer.OnTimer = &TTriggerable::OnTimer;
 }
 
+// Lépteti a fegyvert/golyót
+// A golyó akkor is létezhet, ha a tulajdonosa már meghalt, ezért érdemes külön tárolni.
 void TFegyver::OnTimer(TObject Sender)
 {
     BitKep->Canvas.Draw(Round(X) - 9, Round(Y) - 9, PuffBitmap0); // kitöröljük a golyót az előző helyről
@@ -206,15 +207,18 @@ void TFegyver::OnTimer(TObject Sender)
         Timer.Enabled = false;
         return;
     }
-    X = X + cos_fok(Szog) * FegyverSebesseg;
-    Y = Y - sin_fok(Szog) * FegyverSebesseg;
+    // Kiszámoljuk a golyó új helyét
+    X += cos_fok(Szog) * FegyverSebesseg;
+    Y -= sin_fok(Szog) * FegyverSebesseg;
     Timer.Tag++;
+    // Kirajzoljuk a golyót az új helyén
     BitKep->Canvas.Draw(Round(X) - 9, Round(Y) - 9, Jatekos[Szam].PuffBitmap);
     if ((X < -10) || (Y < -10) || (X > KepSzeles + 10) || (Y > KepMagas + 10)) {
         Destroy();
     }
 }
 
+// Letiltja a golyót, törli a timerét
 void TFegyver::Destroy()
 {
     Timer.Enabled = false;
@@ -241,7 +245,7 @@ TKettoSzin TForm1::SzineketSzamol(int x, int y, int szam)
             if (c == c2) {
                 e.SajatSzin++;
             }
-            if ((c != TColor::clBlack) && (c != c2)) {
+            else if (c != TColor::clBlack) {
                 e.NemFekete++;
             }
         }
@@ -250,14 +254,16 @@ TKettoSzin TForm1::SzineketSzamol(int x, int y, int szam)
     return e;
 }
 
+// A Form1 tárolja az egész játékot, ezért kb. ez a függvény inicializál mindent.
 void TForm1::FormCreate(TObject Sender)
 {
     KepSzeles = Screen.Width - 120;
     KepMagas = Screen.Height;
 
-    PanelJatszoEmberek = 0;
+    PanelJatszoEmberek = 0; // Összes résztvevő
 
     for (int x = 0; x < Jatekosok; x++) {
+        // Pontszám labelek előkészítése
         PontLabel[x] = new TLabel(Form1);
 
         PontLabel[x]->Parent = Panel1;
@@ -273,6 +279,7 @@ void TForm1::FormCreate(TObject Sender)
         PontLabel[x]->OnMouseDown = &TForm::FormMouseDown;
         PontLabel[x]->OnMouseUp = &TForm::FormMouseUp;
 
+        // 'Aktív' labelek előkészítése a menüben
         PanelLabel[x] = new TLabel(Form1);
 
         PanelLabel[x]->Parent = GroupBox2;
@@ -296,6 +303,7 @@ void TForm1::FormCreate(TObject Sender)
         Jatekos[x].bmpVonal->Canvas.Brush.Color = Szinek[x];
         Jatekos[x].bmpVonal->Canvas.Rectangle(0, 0, Vastagsag, Vastagsag);
 
+        // Megcsináljuk a színes halálfejét minden egyes játékosnak.
         Jatekos[x].bmpHalalfej = new TBitmap();
 
         Jatekos[x].bmpHalalfej->Width = 50;
@@ -314,6 +322,7 @@ void TForm1::FormCreate(TObject Sender)
         Jatekos[x].Halalfej.Idozites = 0;
     }
 
+    // Ugyanaz, mint a játékosoknál a bmpVonal, csak ezt akkor rajzoljuk, amikor szaggatás van.
     bmpVonalFekete = new TBitmap();
 
     bmpVonalFekete->Width = Vastagsag;
@@ -323,6 +332,8 @@ void TForm1::FormCreate(TObject Sender)
     bmpVonalFekete->Canvas.Rectangle(0, 0, Vastagsag, Vastagsag);
 
     //létrehozzuk a fő Bitmap-eket
+    //BitKep: Ezen van a játék
+    //BitKep2: Ezen vannak a halálfejek (ideiglenes)
     BitKep = new TBitmap();
 
     BitKep->Width = KepSzeles;
@@ -334,6 +345,7 @@ void TForm1::FormCreate(TObject Sender)
     BitKep2->Height = KepMagas;
 
     //létrehozzuk a golyók Bitmap-jét
+    //PuffBitmap0: fekete golyó
     PuffBitmap0 = new TBitmap(); // Ez a fekete golyóé
     PuffBitmap0->Width = 19;
     PuffBitmap0->Height = 19;
@@ -391,12 +403,14 @@ void TForm1::FormCreate(TObject Sender)
     UresImage(true, AktualisMod.VanKeret);
 }
 
+// Újrarajzoljuk a pályát játék elején
 void TForm1::UresImage(bool Torol, bool VanKeret)
 {
-    if (Torol) {
+    if (Torol) { // Ilyenkor keretet sem rajzolunk
         BitKep->Canvas.Brush.Color = clBlack;
         BitKep->Canvas.Rectangle(-1, -1, KepSzeles + 1, KepMagas + 1);
-    } else { // az arrSzurkePixelek tömbben tárolt koordinátákat átszínezzük
+    } else {
+        // az arrSzurkePixelek tömbben tárolt koordinátákat átszínezzük
         int l = Length(arrSzurkePixelek); // (ez a tömb csak falnélküli módban tárol elemeket)
 
         for (int a = l - 1; a >= 0; a--) {
@@ -412,7 +426,8 @@ void TForm1::UresImage(bool Torol, bool VanKeret)
             //SetLength(arrLyukak, 0);
         }
 
-        if (VanKeret) { // újrarajzoljuk a keretet
+        // újrarajzoljuk a keretet
+        if (VanKeret) {
             BitKep->Canvas.Brush.Color = clWhite;
             BitKep->Canvas.Pen.Color = clWhite;
             BitKep->Canvas.Rectangle(0, 0, KepSzeles, KeretSzeles);
@@ -422,7 +437,7 @@ void TForm1::UresImage(bool Torol, bool VanKeret)
         }
     }
 
-    PaintBoxRajzol();
+    PaintBoxRajzol(); // Kirajzoltatjuk a bitmapeket
 }
 
 // Üt a timer, történnek az időfüggő dolgok
@@ -431,9 +446,11 @@ void TForm1::Timer1Timer(TObject Sender)
     Timer1.Tag = (Timer1.Tag + 1) % 70;
 
     for (int a = 0; a < Jatekosok; a++) {
+        // nem aktív játékos átlépése
         if (!Jatekos[a].Engedett) {
-            continue; // nem aktív játékos átlépése
+            continue;
         }
+
         if (Timer1.Tag >= AktualisMod.SzaggatasTag) {
             int x = Round(Jatekos[a].HelyX);
             int y = Round(Jatekos[a].HelyY);
@@ -447,143 +464,157 @@ void TForm1::Timer1Timer(TObject Sender)
             } else {
                 BitKep->Canvas.Draw(x, y, bmpVonalFekete);
             }
+        }
 
-            Jatekos[a].Irany -= Jatekos[a].Kanyar * Fokok;
+        // Kanyarodunk
+        Jatekos[a].Irany -= Jatekos[a].Kanyar * Fokok;
 
-            if (Jatekos[a].Irany < 0) {
-                Jatekos[a].Irany += 360;
+        if (Jatekos[a].Irany < 0) {
+            Jatekos[a].Irany += 360;
+        }
+        if (Jatekos[a].Irany >= 360) {
+            Jatekos[a].Irany -= 360;
+        }
+
+        // kiszámítjuk az új koordinátákat
+        Jatekos[a].HelyX += Ut * cos_fok(Jatekos[a].Irany);
+        Jatekos[a].HelyY -= Ut * sin_fok(Jatekos[a].Irany);
+
+        // Ha nincs keret, átmegy a túloldalra
+        if (!AktualisMod.VanKeret) {
+            if (Jatekos[a].HelyX >= KepSzeles) {
+                Jatekos[a].HelyX -= KepSzeles;
             }
-            if (Jatekos[a].Irany >= 360) {
-                Jatekos[a].Irany -= 360;
+            if (Jatekos[a].HelyX <= 0) {
+                Jatekos[a].HelyX += KepSzeles;
             }
-
-            // kiszámítjuk az új koordinátákat
-            Jatekos[a].HelyX += Ut * cos_fok(Jatekos[a].Irany);
-            Jatekos[a].HelyY -= Ut * sin_fok(Jatekos[a].Irany);
-
-            if (!AktualisMod.VanKeret) {
-                if (Jatekos[a].HelyX >= KepSzeles) {
-                    Jatekos[a].HelyX -= KepSzeles;
-                }
-                if (Jatekos[a].HelyX <= 0) {
-                    Jatekos[a].HelyX += KepSzeles;
-                }
-                if (Jatekos[a].HelyY >= KepMagas) {
-                    Jatekos[a].HelyY -= KepMagas;
-                }
-                if (Jatekos[a].HelyY <= 0) {
-                    Jatekos[a].HelyY += KepMagas;
-                }
+            if (Jatekos[a].HelyY >= KepMagas) {
+                Jatekos[a].HelyY -= KepMagas;
             }
-
-            x = Round(Jatekos[a].HelyX);
-            y = Round(Jatekos[a].HelyY);
-
-            // ha a szaggatás felezőpontjánál vagyunk, akkor letároljuk
-            /*if (Timer1.Tag == Lyukak_SzaggatasFele) {
-                p = Length(arrLyukak);
-                SetLength(arrLyukak, p + 1);
-                arrLyukak[p].Pont = TPoint(x, y);
-                arrLyukak[p].Szog = Jatekos[a].Irany;
-                arrLyukak[p].Hasznalt = false;
-            }*/
-
-            TKettoSzin KettoSzin = SzineketSzamol(x, y, a);
-
-            if ((KettoSzin.NemFekete>0) || (KettoSzin.SajatSzin>9) || (AktualisMod.VanKeret && ((x<=0) || (y<=0) || (x>=KepSzeles-Vastagsag) || (y>=KepMagas-Vastagsag)))) {
-                Jatekos[a].Engedett = false;
-
-                Jatekos[a].Halalfej.Coord_TopLeft = TPoint(x-25,y-24);
-                Jatekos[a].Halalfej.Idozites = 50;
-
-                // a még élő játékosok pontokat kapnak
-                int p = 0;
-                int q = 0;
-                bool logi = true; // Még életben van a játékos, nem lőtte le senki
-
-                for (int b = 0; b < Jatekosok; b++) {
-                    if (Jatekos[b].Engedett) {
-                        if (logi) {
-                            if (Jatekos[b].FegyverAktiv) {
-                                // gyök 138 ~ 11.7473 -> lelőttek valakit
-                                if (sqr(Jatekos[b].Fegyver->X - Jatekos[a].HelyX) + sqr(Jatekos[b].Fegyver->Y - Jatekos[a].HelyY) < 138)
-                                {
-                                    Jatekos[b].Pont += 3;
-                                    logi = false;
-                                }
-                            }
-                        }
-                        // ha egy golyó okozta a játékos halálát, akkor a golyó tulajdonosa további pontokat kap
-                        // mivel a meghalt játékost már letiltottuk, ezért ha véletlenül a saját golyójától hal meg, nincs pont
-                        Jatekos[b].Pont += 2;
-                        PontLabel[b]->Caption = IntToStr(Jatekos[b].Pont);
-                        p++;
-                    }
-                    q = Max(q, Jatekos[b].Pont);
-                }
-
-                if (p <= 1) {
-                    // senki nincs már életben
-                    Timer1.Enabled = false;
-                    if (q < (PanelJatszoEmberek - 1) * 25) {
-                        NewRaceLabel.Show();
-                    } else {
-                        PanelLabelHideAll();
-                    }
-                    PaintBoxRajzol(); // hogy az utolsó halálfej is kirajzolódjon
-                    return;
-                }
-            }
-
-            /*if (AktualisMod.LyukPont) {
-                p = Length(arrLyukak); // ha átmegy egy lyukon, akkor pontot kap
-                while (p > 0) {
-                    p--;
-                    TVektor vektor = arrLyukak[p];
-                    if (vektor.Hasznalt) {
-                        continue;
-                    }
-                    q = abs(vektor.Szog - Jatekos[a].Irany);
-                    if (q > 180) {
-                        q = 360 - q;
-                    }
-                    if ((sqrt(x - vektor.Pont.X) + sqrt(y - vektor.Pont.Y)) <= 46) {
-                        if (q > 55) {
-                            arrLyukak[p].Hasznalt = true;
-                            Jatekos[a].Pont++;
-                            PontLabel[a]->Caption = IntToStr(Jatekos[a].Pont);
-                        }
-                    }
-                }
-            }*/
-
-            //kirajzoljuk a vonalat színesen
-            if ((x < 10) || (x > KepSzeles - 10) || (y < 10) || (y > KepMagas - 10)) {
-                for (int p = -1; p <= 1; p++) {
-                    for (int q = -1; q <= 1; q++) {
-                        BitKep->Canvas.Draw(x + p * KepSzeles, y + q * KepMagas, Jatekos[a].bmpVonal);
-                    }
-                }
-            } else {
-                BitKep->Canvas.Draw(x, y, Jatekos[a].bmpVonal);
-            }
-
-            if (!AktualisMod.UjMenetnelTorol) // letároljuk a pixel koordinátáit egy dinamikus tömbben
-            {
-                int p = Length(arrSzurkePixelek);
-                SetLength(arrSzurkePixelek, p + 1);
-                arrSzurkePixelek[p] = TPoint(x, y);
+            if (Jatekos[a].HelyY <= 0) {
+                Jatekos[a].HelyY += KepMagas;
             }
         }
 
-        PaintBoxRajzol();
+        // A kerekített koordinátákból pixeleket számolunk
+        int x = Round(Jatekos[a].HelyX);
+        int y = Round(Jatekos[a].HelyY);
+
+        // ha a szaggatás felezőpontjánál vagyunk, akkor letároljuk
+        /*if (Timer1.Tag == Lyukak_SzaggatasFele) {
+            p = Length(arrLyukak);
+            SetLength(arrLyukak, p + 1);
+            arrLyukak[p].Pont = TPoint(x, y);
+            arrLyukak[p].Szog = Jatekos[a].Irany;
+            arrLyukak[p].Hasznalt = false;
+        }*/
+
+        TKettoSzin KettoSzin = SzineketSzamol(x, y, a);
+
+        // Meghalt a játékos (vonallal, kerettel vagy golyóval ütközött)
+        if ((KettoSzin.NemFekete>0) || (KettoSzin.SajatSzin>9) || (AktualisMod.VanKeret && ((x<=0) || (y<=0) || (x>=KepSzeles-Vastagsag) || (y>=KepMagas-Vastagsag)))) {
+            Jatekos[a].Engedett = false; // Játékos deaktiválása
+
+            // Halálfej bekapcsolása
+            Jatekos[a].Halalfej.Coord_TopLeft = TPoint(x-25,y-24);
+            Jatekos[a].Halalfej.Idozites = 50;
+
+            // a még élő játékosok pontokat kapnak
+            int p = 0;
+            int q = 0;
+            bool logi = true; // Még életben van a játékos, nem lőtte le senki
+
+            for (int b = 0; b < Jatekosok; b++) {
+                if (Jatekos[b].Engedett) {
+                    if (logi) {
+                        if (Jatekos[b].FegyverAktiv) {
+                            // gyök 138 ~ 11.7473 -> valakinek a golyója közelében halt meg
+                            if (sqr(Jatekos[b].Fegyver->X - Jatekos[a].HelyX) + sqr(Jatekos[b].Fegyver->Y - Jatekos[a].HelyY) < 138)
+                            {
+                                Jatekos[b].Pont += 3; // A lelövő játékos 3 pontot kap
+                                logi = false;
+                            }
+                        }
+                    }
+                    // ha egy golyó okozta a játékos halálát, akkor a golyó tulajdonosa további pontokat kap
+                    // mivel a meghalt játékost már letiltottuk, ezért ha véletlenül a saját golyójától hal meg, nincs pont
+                    Jatekos[b].Pont += 2;
+                    PontLabel[b]->Caption = IntToStr(Jatekos[b].Pont);
+                    p++;
+                }
+                q = Max(q, Jatekos[b].Pont);
+            }
+
+            // senki nincs már életben
+            if (p <= 1) {
+                Timer1.Enabled = false;
+                if (q < (PanelJatszoEmberek - 1) * 25) {
+                    NewRaceLabel.Show();
+                } else {
+                    PanelLabelHideAll();
+                }
+                PaintBoxRajzol(); // hogy az utolsó halálfej is kirajzolódjon
+                return;
+            }
+        }
+
+        // Ezt a logikát lehet, hogy át lehetne egy kicsit rendezni, hogy pl. egyszerre is meghalhassanak játékosok
+
+        // Lyukért pont jár -> Ebben a verzióban még nincs benne
+        /*if (AktualisMod.LyukPont) {
+            p = Length(arrLyukak); // ha átmegy egy lyukon, akkor pontot kap
+            while (p > 0) {
+                p--;
+                TVektor vektor = arrLyukak[p];
+                if (vektor.Hasznalt) {
+                    continue;
+                }
+                q = abs(vektor.Szog - Jatekos[a].Irany);
+                if (q > 180) {
+                    q = 360 - q;
+                }
+                if ((sqrt(x - vektor.Pont.X) + sqrt(y - vektor.Pont.Y)) <= 46) {
+                    if (q > 55) {
+                        arrLyukak[p].Hasznalt = true;
+                        Jatekos[a].Pont++;
+                        PontLabel[a]->Caption = IntToStr(Jatekos[a].Pont);
+                    }
+                }
+            }
+        }*/
+
+        //kirajzoljuk a vonalat színesen
+        // Játéktér szélén vagyunk -> a határra is kerülhet a pixel és "elfeleződhet".
+        if ((x < 10) || (x > KepSzeles - 10) || (y < 10) || (y > KepMagas - 10)) { // Itt is lehet egy kicsit finomítani
+            for (int p = -1; p <= 1; p++) {
+                for (int q = -1; q <= 1; q++) {
+                    BitKep->Canvas.Draw(x + p * KepSzeles, y + q * KepMagas, Jatekos[a].bmpVonal);
+                }
+            }
+        } else {
+            // Játéktér közepén vagyunk
+            BitKep->Canvas.Draw(x, y, Jatekos[a].bmpVonal);
+        }
+
+        // Öröklődő mód:
+        // letároljuk a pixel koordinátáit egy dinamikus tömbben
+        if (!AktualisMod.UjMenetnelTorol)
+        {
+            int p = Length(arrSzurkePixelek);
+            SetLength(arrSzurkePixelek, p + 1);
+            arrSzurkePixelek[p] = TPoint(x, y);
+        }
     }
+
+    // Mindent kirajzolunk
+    PaintBoxRajzol();
 }
 
 // Megnyomtunk egy gombot
 void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
 {
-    // ESC -> kilépés
+    // ESC
+    // Játék -> Menü -> Kilépés
     if (Key == VK_ESCAPE) {
         if (Panel2.Visible) {
             Close();
@@ -602,7 +633,6 @@ void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
     }
 
     // Ha a menüben vagyunk, lekezeljük a játékmód változását.
-    //lekezeljük az esetleges mód-módosítást
     if (Panel2.Visible) {
         int a = 0;
 
@@ -713,6 +743,7 @@ void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
     }
 }
 
+// Felengedtük a gombot -> Játék közben visszaállunk egyenesbe
 void TForm1::FormKeyUp(TObject Sender, int Key, TShiftState Shift)
 {
     if (Timer1.Enabled) {
@@ -727,6 +758,7 @@ void TForm1::FormKeyUp(TObject Sender, int Key, TShiftState Shift)
     }
 }
 
+// Megnyomjuk az egeret -> Játék vezérlése vagy játékos kiválasztása
 void TForm1::FormMouseDown(TObject Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
 {
     if (Timer1.Enabled) {
@@ -735,21 +767,22 @@ void TForm1::FormMouseDown(TObject Sender, TMouseButton Button, TShiftState Shif
         } else if (Button == mbRight) {
             Jatekos[6].Kanyar = 1;
         } else if (Button == mbMiddle) {
-            NewFegyver(7);
+            NewFegyver(6);
         }
     }
 
     if (Panel2.Visible)
     {
         if (Button = mbLeft) {
-            PanelLabel[7]->Show();
+            PanelLabel[6]->Show();
         }
         if (Button = mbRight) {
-            PanelLabel[7]->Hide();
+            PanelLabel[6]->Hide();
         }
     }
 }
 
+// Felengedjük az egeret -> Az egeres játékos abbahagyja a kanyarodást
 void TForm1::FormMouseUp(TObject Sender, TMouseButton Button, TShiftState Shift, int X, int Y)
 {
     if (Timer1.Enabled)
@@ -763,6 +796,7 @@ void TForm1::FormMouseUp(TObject Sender, TMouseButton Button, TShiftState Shift,
     }
 }
 
+// Bezárjuk a formot, felszabadítunk mindent.
 void TForm1::FormClose(TObject Sender, TCloseAction Action)
 {
     for (int a = 0; a < Jatekosok; a++) {
@@ -778,14 +812,11 @@ void TForm1::FormClose(TObject Sender, TCloseAction Action)
     delete PuffBitmap0;
 }
 
-void TForm1::FormShow(TObject Sender)
-{
-    ShowCursor(false);
-}
-
+// Új menet (nem új játék)
 void TForm1::UjMenet()
 {
-    BitKep->Canvas.Brush.Style = bsClear;
+    BitKep->Canvas.Brush.Style = bsClear; // Az üres ellipszishez kikapcsoljuik a kitöltést
+
     // Visszaállítjuk a játékosok fegyverét (akkor aktív a fegyver, ha épp van golyó a pályán)
     for (int a = 0; a < Jatekosok; a++) {
         if (Jatekos[a].FegyverAktiv) {
@@ -804,7 +835,6 @@ void TForm1::UjMenet()
             }
         }
         PaintBoxRajzol();
-        ProcessMessages();
         Sleep(11); // Várunk, amíg az animáció következő lépését kirajzoljuk.
         // Feketével átrajzoljuk az előbb színessel kirajzolt kört, ezzel a vonalakat is letöröljük a játékos körül.
         BitKep->Canvas.Pen.Color = clBlack;
@@ -828,6 +858,7 @@ void TForm1::UjMenet()
     Timer1.Enabled = true;
 }
 
+// Kirajzolja a menüt resetelt játékosokkal
 void TForm1::PanelLabelHideAll()
 {
     for (int a = 0; a < Jatekosok; a++) {
