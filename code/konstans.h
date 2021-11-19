@@ -30,6 +30,31 @@ const int Fokok = 4; // Ekkora szögben fordul egy játékos
 const int Vastagsag = 4; // nem lehet több 10-nél, különben a falnélküli mód hibásan viselkedhet
 const int VastagsagDelta = 2; // (Vastagsag-1) div 2
 const int MinimalisJatekos = 1;
+const int KeretSzeles = 7; // Vastag keret szélessége
+
+enum JatekModNev {
+    STANDARD = 0,
+    FOLYTONOS,
+    OROKLODO,
+    FALNELKULI,
+
+    JATEKMOD_SZAM
+};
+
+struct TJatekMod {
+    int SzaggatasTag; // 70 timer tickből mennyi ideig van vonal?
+    int StartPont; // Induló pontszám (falnélkülinél kapnak pontot a játékosok)
+    bool UjMenetnelTorol;
+    bool VanKeret;
+    //bool LyukPont;
+};
+
+const TJatekMod JatekMod[JATEKMOD_SZAM] = {
+    [STANDARD]   = {.SzaggatasTag = 67, .StartPont = 0, .UjMenetnelTorol = true,  .VanKeret = true,  /*.LyukPont = true*/},
+    [FOLYTONOS]  = {.SzaggatasTag = 70, .StartPont = 3, .UjMenetnelTorol = true,  .VanKeret = true,  /*.LyukPont = false*/},
+    [OROKLODO]   = {.SzaggatasTag = 26, .StartPont = 0, .UjMenetnelTorol = false, .VanKeret = true,  /*.LyukPont = false*/},
+    [FALNELKULI] = {.SzaggatasTag = 66, .StartPont = 0, .UjMenetnelTorol = true,  .VanKeret = false, /*.LyukPont = true*/}
+};
 
 // ABGR (little endian)
 const uint32_t sdl_szinek[TColor_num] = {

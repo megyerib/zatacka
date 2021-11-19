@@ -107,12 +107,6 @@ public:
 class TForm : public TObject
 {
 public:
-    struct
-    {
-        int Width;
-        int Height;
-    } Screen;
-
     virtual void FormMouseDown(TObject Sender, TMouseButton Button, TShiftState Shift, int X, int Y) = 0;
     virtual void FormMouseUp(TObject Sender, TMouseButton Button, TShiftState Shift, int X, int Y) = 0;
     void Close();
@@ -178,7 +172,6 @@ class TTimer
 {
 public:
     TTimer() {}
-    TTimer(TObject& parent) {}
     int Interval;
     void (TTriggerable::*OnTimer)(TObject);
     bool Enabled;

@@ -5,18 +5,11 @@
 #include <SDL2_gfxPrimitives.h>
 #include <cstdio>
 #include "eredmenyjelzo.h"
+#include "jatekter.h"
 
 using namespace std;
 
 // type
-
-struct TJatekMod {
-    int SzaggatasTag; // 70 timer tickből mennyi ideig van vonal?
-    int StartPont; // Induló pontszám (falnélkülinél kapnak pontot a játékosok)
-    bool UjMenetnelTorol;
-    bool VanKeret;
-    //bool LyukPont;
-};
 
 // Halálfej adatai (nem a bitmap)
 struct THalalfej {
@@ -73,7 +66,6 @@ class TForm1 : public TForm
     // Úgy látom, a játéktér skálázható (a program indításakor)
     // A menü box a bal felső sarokhoz, a ponttábla a jobb oldalhoz rögzül.
 public:
-    TTimer Timer1; // Ez adja a ticket a játékhoz, általában ezt nézegetjük, ha arra vagyunk kíváncsiak, hogy játszunk-e. (Interval: 24 [ms?])
     TPanel Panel1; // Pontszám panel
     TImageList ImageList1; // Halálfej kép
     TPanel Panel2;       // Menü panel
@@ -118,29 +110,19 @@ public:
     void PaintBoxRajzol();
     void PaintBoxOnPaint(TObject Sender);
     
-    TForm1(){}
+    TForm1(SDL_Renderer* renderer);
+
+    Jatekter jatekter;
 };
 
-enum JatekModNev {
-    STANDARD = 0,
-    FOLYTONOS,
-    OROKLODO,
-    FALNELKULI,
+TForm1::TForm1(SDL_Renderer* renderer) : jatekter(renderer)
+{
 
-    JATEKMOD_SZAM
-};
-
-const TJatekMod JatekMod[JATEKMOD_SZAM] = {
-    [STANDARD]   = {.SzaggatasTag = 67, .StartPont = 0, .UjMenetnelTorol = true,  .VanKeret = true,  /*.LyukPont = true*/},
-    [FOLYTONOS]  = {.SzaggatasTag = 70, .StartPont = 3, .UjMenetnelTorol = true,  .VanKeret = true,  /*.LyukPont = false*/},
-    [OROKLODO]   = {.SzaggatasTag = 26, .StartPont = 0, .UjMenetnelTorol = false, .VanKeret = true,  /*.LyukPont = false*/},
-    [FALNELKULI] = {.SzaggatasTag = 66, .StartPont = 0, .UjMenetnelTorol = true,  .VanKeret = false, /*.LyukPont = true*/}
-};
-const int KeretSzeles = 7; // Vastag keret szélessége
+}
 
 // var
 
-TForm1 Form1; // Játéktér form. Ezen belül a Panel1 az eredményjelző, a Panel2 a menü.
+TTimer Timer1; // Ez adja a ticket a játékhoz, általában ezt nézegetjük, ha arra vagyunk kíváncsiak, hogy játszunk-e. (Interval: 24 [ms?])
 TJatekos Jatekos[Jatekosok];
 int KepSzeles; // Képernyő szélessége - jobb oldali 120 pixeles eredményjelző
 int KepMagas; // Képernyő magassága
@@ -171,7 +153,7 @@ void TForm1::NewFegyver(int a)
 
 // Helyzet, irány, tulaj megadása
 // + beregisztrálja a timert, amit én valahogy máshogy fogok megoldani.
-TFegyver::TFegyver(int x, int y, int Irany, int Tulaj) : Timer(Form1)
+TFegyver::TFegyver(int x, int y, int Irany, int Tulaj)
 {
     Szog = Irany;
     X = x + cos_fok(Szog) * 18;
@@ -179,7 +161,7 @@ TFegyver::TFegyver(int x, int y, int Irany, int Tulaj) : Timer(Form1)
     Szam = Tulaj;
     Jatekos[Szam].FegyverAktiv = true;
 
-    Timer.Interval = Form1.Timer1.Interval;
+    Timer.Interval = Timer1.Interval;
     Timer.OnTimer = &TTriggerable::OnTimer;
 }
 
@@ -188,7 +170,7 @@ TFegyver::TFegyver(int x, int y, int Irany, int Tulaj) : Timer(Form1)
 void TFegyver::OnTimer(TObject Sender)
 {
     BitKep->Canvas.Draw(Round(X) - 9, Round(Y) - 9, PuffBitmap0); // kitöröljük a golyót az előző helyről
-    if (!Form1.Timer1.Enabled) { // Ha nem játszunk, a golyót sem léptetjük tovább
+    if (!Timer1.Enabled) { // Ha nem játszunk, a golyót sem léptetjük tovább
         Timer.Enabled = false;
         return;
     }
@@ -242,14 +224,14 @@ TKettoSzin TForm1::SzineketSzamol(int x, int y, int szam)
 // A Form1 tárolja az egész játékot, ezért kb. ez a függvény inicializál mindent.
 void TForm1::FormCreate(TObject Sender)
 {
-    KepSzeles = Screen.Width - 120;
-    KepMagas = Screen.Height;
+    KepSzeles = jatekter.pozicio.w;
+    KepMagas = jatekter.pozicio.h;
 
     PanelJatszoEmberek = 0; // Összes résztvevő
 
     for (int x = 0; x < Jatekosok; x++) {
         // Pontszám labelek előkészítése
-        PontLabel[x] = new TLabel(Form1);
+        //PontLabel[x] = new TLabel(Form1);
 
         PontLabel[x]->Parent = Panel1;
         PontLabel[x]->Caption = '0';
@@ -265,7 +247,7 @@ void TForm1::FormCreate(TObject Sender)
         PontLabel[x]->OnMouseUp = &TForm::FormMouseUp;
 
         // 'Aktív' labelek előkészítése a menüben
-        PanelLabel[x] = new TLabel(Form1);
+        //PanelLabel[x] = new TLabel(Form1);
 
         PanelLabel[x]->Parent = GroupBox2;
         PanelLabel[x]->Caption = "Aktív";
@@ -392,8 +374,7 @@ void TForm1::FormCreate(TObject Sender)
 void TForm1::UresImage(bool Torol, bool VanKeret)
 {
     if (Torol) { // Ilyenkor keretet sem rajzolunk
-        BitKep->Canvas.Brush.Color = clBlack;
-        BitKep->Canvas.Rectangle(-1, -1, KepSzeles + 1, KepMagas + 1);
+        jatekter.Torol();
     } else {
         // az arrSzurkePixelek tömbben tárolt koordinátákat átszínezzük
         int l = Length(arrSzurkePixelek); // (ez a tömb csak falnélküli módban tárol elemeket)
@@ -413,12 +394,7 @@ void TForm1::UresImage(bool Torol, bool VanKeret)
 
         // újrarajzoljuk a keretet
         if (VanKeret) {
-            BitKep->Canvas.Brush.Color = clWhite;
-            BitKep->Canvas.Pen.Color = clWhite;
-            BitKep->Canvas.Rectangle(0, 0, KepSzeles, KeretSzeles);
-            BitKep->Canvas.Rectangle(0, 0, KeretSzeles, KepMagas);
-            BitKep->Canvas.Rectangle(KepSzeles - KeretSzeles, 0, KepSzeles, KepMagas);
-            BitKep->Canvas.Rectangle(0, KepMagas - KeretSzeles, KepSzeles, KepMagas);
+            jatekter.Keret();
         }
     }
 
@@ -933,6 +909,11 @@ int main()
     /* csinaljunk valamit */
     Eredmenyjelzo eredmenyjelzo(renderer);
 
+    TForm1 main_form(renderer);
+
+    main_form.UresImage(false, true);
+    main_form.jatekter.Megjelenit();
+
     /* az elvegzett rajzolasok a kepernyore */
     SDL_RenderPresent(renderer);
 
@@ -955,4 +936,3 @@ int main()
  
     return 0;
 }
-;
