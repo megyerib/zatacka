@@ -50,11 +50,11 @@ int Eredmenyjelzo::Keret()
 {
     int error = 0;
 
-    error = error || lineColor(renderer, 0, 0, 0, pozicio.h - 1, sdl_szinek[clWhite]) SDL_LOG_ERROR;
-    error = error || lineColor(renderer, 0, 0, pozicio.w - 1, 0, sdl_szinek[clWhite]) SDL_LOG_ERROR;
+    error = error || lineColor(renderer, 0, 0, 0, pozicio.h - 1, clWhite) SDL_LOG_ERROR;
+    error = error || lineColor(renderer, 0, 0, pozicio.w - 1, 0, clWhite) SDL_LOG_ERROR;
 
-    error = error || lineColor(renderer, pozicio.w - 1, 0, pozicio.w - 1, pozicio.h - 1, sdl_szinek[clSilver]) SDL_LOG_ERROR;
-    error = error || lineColor(renderer, 0, pozicio.h - 1, pozicio.w - 1, pozicio.h - 1, sdl_szinek[clSilver]) SDL_LOG_ERROR;
+    error = error || lineColor(renderer, pozicio.w - 1, 0, pozicio.w - 1, pozicio.h - 1, clSilver) SDL_LOG_ERROR;
+    error = error || lineColor(renderer, 0, pozicio.h - 1, pozicio.w - 1, pozicio.h - 1, clSilver) SDL_LOG_ERROR;
 
     return error;
 }

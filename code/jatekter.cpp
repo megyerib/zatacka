@@ -34,7 +34,7 @@ int Jatekter::Torol()
 {
     int error = SDL_SetRenderTarget(renderer, texture);
 
-    boxColor(renderer, 0, 0, pozicio.w - 1, pozicio.h - 1, sdl_szinek[clBlack]);
+    boxColor(renderer, 0, 0, pozicio.w - 1, pozicio.h - 1, clBlack);
 
     error = error || SDL_SetRenderTarget(renderer, NULL);
 
@@ -45,10 +45,10 @@ int Jatekter::Keret()
 {
     int error = SDL_SetRenderTarget(renderer, texture);
 
-    boxColor(renderer, 0, 0, pozicio.w - 1, KeretSzeles - 1, sdl_szinek[clWhite]);
-    boxColor(renderer, 0, pozicio.h - KeretSzeles, pozicio.w - 1, pozicio.h - 1, sdl_szinek[clWhite]);
-    boxColor(renderer, 0, 0, KeretSzeles - 1, pozicio.h - 1, sdl_szinek[clWhite]);
-    boxColor(renderer, pozicio.w - KeretSzeles, 0, pozicio.w - 1, pozicio.h - 1, sdl_szinek[clWhite]);
+    boxColor(renderer, 0, 0, pozicio.w - 1, KeretSzeles - 1, clWhite);
+    boxColor(renderer, 0, pozicio.h - KeretSzeles, pozicio.w - 1, pozicio.h - 1, clWhite);
+    boxColor(renderer, 0, 0, KeretSzeles - 1, pozicio.h - 1, clWhite);
+    boxColor(renderer, pozicio.w - KeretSzeles, 0, pozicio.w - 1, pozicio.h - 1, clWhite);
 
     error = error || SDL_SetRenderTarget(renderer, NULL);
 

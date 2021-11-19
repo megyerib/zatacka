@@ -4,20 +4,18 @@
 #include <SDL.h>
 
 enum TColor
-{
-    clRed,
-    clYellow,
-    clBlue,
-    clOlive,
-    clLime,
-    clMagenta,
-    clAqua,
-    clBlack,
-    clWhite,
-    clMaroon,
-    clSilver,
-
-    TColor_num
+{   // ABGR (little endian)
+    clRed     = 0xFF0000FF,
+    clYellow  = 0xFF00FFFF,
+    clBlue    = 0xFFFF0000,
+    clOlive   = 0xFF008080,
+    clLime    = 0xFF00FF00,
+    clMagenta = 0xFFFF00FF,
+    clAqua    = 0xFFFFFF00,
+    clBlack   = 0xFF000000,
+    clWhite   = 0xFFFFFFFF,
+    clMaroon  = 0xFF000080,
+    clSilver  = 0xFFA0A0A0,
 };
 
 const int EREDMJ_SZ = 120; // Eredményjelző szélessége [px]
@@ -54,21 +52,6 @@ const TJatekMod JatekMod[JATEKMOD_SZAM] = {
     [FOLYTONOS]  = {.SzaggatasTag = 70, .StartPont = 3, .UjMenetnelTorol = true,  .VanKeret = true,  /*.LyukPont = false*/},
     [OROKLODO]   = {.SzaggatasTag = 26, .StartPont = 0, .UjMenetnelTorol = false, .VanKeret = true,  /*.LyukPont = false*/},
     [FALNELKULI] = {.SzaggatasTag = 66, .StartPont = 0, .UjMenetnelTorol = true,  .VanKeret = false, /*.LyukPont = true*/}
-};
-
-// ABGR (little endian)
-const uint32_t sdl_szinek[TColor_num] = {
-    [clRed]     = 0xFF0000FF,
-    [clYellow]  = 0xFF00FFFF,
-    [clBlue]    = 0xFFFF0000,
-    [clOlive]   = 0xFF008080,
-    [clLime]    = 0xFF00FF00,
-    [clMagenta] = 0xFFFF00FF,
-    [clAqua]    = 0xFFFFFF00,
-    [clBlack]   = 0xFF000000,
-    [clWhite]   = 0xFFFFFFFF,
-    [clMaroon]  = 0xFF000080,
-    [clSilver]  = 0xFFA0A0A0,
 };
 
 const std::string strSzabalyok =
