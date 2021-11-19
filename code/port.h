@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "konstans.h"
 
 using namespace std;
 
@@ -48,21 +49,6 @@ enum TMouseButton
     mbLeft,
     mbRight,
     mbMiddle
-};
-
-enum TColor
-{
-    clRed,
-    clYellow,
-    clBlue,
-    clOlive,
-    clLime,
-    clMagenta,
-    clAqua,
-    clBlack,
-    clWhite,
-    clMaroon,
-    clSilver
 };
 
 enum TShiftState
