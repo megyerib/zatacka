@@ -2,6 +2,11 @@
 #include "gomb.h"
 #include <vector>
 #include <SDL.h>
+#include <SDL2_gfxPrimitives.h>
+#include <cstdio>
+#include "eredmenyjelzo.h"
+
+#define LOG_SDL_ERROR && printf("Error! %s:%d\n", __FILE__, __LINE__)
 
 using namespace std;
 
@@ -923,8 +928,8 @@ void TForm1::PaintBoxOnPaint(TObject Sender)
 }
 
 // Ablakméret teszteléshez
-const int WINDOW_WIDTH = 800;
-const int WINDOW_HEIGHT = 600;
+const int WINDOW_WIDTH = 1024;
+const int WINDOW_HEIGHT = 768;
 
 int main()
 {
@@ -946,14 +951,28 @@ int main()
     SDL_RenderClear(renderer);
  
     /* csinaljunk valamit */
- 
+    SDL_Texture* eredmenyjelzo;
+    eredmenyjelzo = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB24, SDL_TEXTUREACCESS_TARGET, 120, WINDOW_HEIGHT);
+    SDL_SetRenderTarget(renderer, eredmenyjelzo) LOG_SDL_ERROR;
+    rectangleRGBA(renderer, 0, 0, 120, WINDOW_HEIGHT, 255, 255, 255, 255) LOG_SDL_ERROR;
+    SDL_Rect eredmenyjelzo_hely = {WINDOW_WIDTH - 120, 0, 120, WINDOW_HEIGHT};
+    SDL_SetRenderTarget(renderer, NULL) LOG_SDL_ERROR;
+    SDL_RenderCopy(renderer, eredmenyjelzo, NULL, &eredmenyjelzo_hely) LOG_SDL_ERROR;
     /* az elvegzett rajzolasok a kepernyore */
     SDL_RenderPresent(renderer);
- 
+
     /* varunk a kilepesre */
     SDL_Event ev;
-    while (SDL_WaitEvent(&ev) && ev.type != SDL_QUIT) {
-        /* SDL_RenderPresent(renderer); - MacOS Mojave esetén */
+    bool quit = false;
+    while (!quit && SDL_WaitEvent(&ev)) {
+        switch (ev.type) {
+        case SDL_QUIT:
+            quit = true;
+            break;
+        
+        default:
+            break;
+        }
     }
  
     /* ablak bezarasa */
@@ -961,3 +980,4 @@ int main()
  
     return 0;
 }
+;
