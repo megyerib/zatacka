@@ -22,34 +22,61 @@ Jatekter::Jatekter(SDL_Renderer* renderer)
         pozicio.w,
         pozicio.h
     );
+
+    font_pozicio.x = 16;
+    font_pozicio.y = pozicio.h - 70;
+    font_pozicio.w = 415;
+    font_pozicio.h = 52;
+
+    TTF_Init();
+    font = TTF_OpenFont(FONT_UTVONAL, 43);
 }
 
-int Jatekter::Megjelenit()
+void Jatekter::Megjelenit()
 {
-    return SDL_RenderCopy(renderer, texture, NULL, &pozicio);
+    SDL_RenderCopy(renderer, texture, NULL, &pozicio);
+    TmpMegjelenit();
 }
 
-int Jatekter::Torol()
+void Jatekter::TmpMegjelenit()
+{
+    if(uj_kor_szoveg) {
+        SDL_Surface *felirat;
+        SDL_Texture *felirat_t;
+
+        /* ha sajat kodban hasznalod, csinalj belole fuggvenyt! */
+        SDL_Color feher = {0xFF, 0xFF, 0xFF, 0xFF};
+        felirat = TTF_RenderUTF8_Blended(font, "Új menethez szóköz...", feher);
+        felirat_t = SDL_CreateTextureFromSurface(renderer, felirat);
+        
+        SDL_RenderCopy(renderer, felirat_t, NULL, &font_pozicio);
+        SDL_FreeSurface(felirat);
+        SDL_DestroyTexture(felirat_t);
+    }
+}
+
+void Jatekter::Torol()
 {
     SDL_SetRenderTarget(renderer, texture);
 
     boxColor(renderer, 0, 0, pozicio.w - 1, pozicio.h - 1, clBlack);
 
     SDL_SetRenderTarget(renderer, NULL);
-
-    return 0;
 }
 
-int Jatekter::Keret()
+void Jatekter::Keret()
 {
-    int error = SDL_SetRenderTarget(renderer, texture);
+    SDL_SetRenderTarget(renderer, texture);
 
     boxColor(renderer, 0, 0, pozicio.w - 1, KeretSzeles - 1, clWhite);
     boxColor(renderer, 0, pozicio.h - KeretSzeles, pozicio.w - 1, pozicio.h - 1, clWhite);
     boxColor(renderer, 0, 0, KeretSzeles - 1, pozicio.h - 1, clWhite);
     boxColor(renderer, pozicio.w - KeretSzeles, 0, pozicio.w - 1, pozicio.h - 1, clWhite);
 
-    error = error || SDL_SetRenderTarget(renderer, NULL);
+    SDL_SetRenderTarget(renderer, NULL);
+}
 
-    return error;
+void Jatekter::UjKorSzoveg(bool megjelenit)
+{
+    uj_kor_szoveg = megjelenit;
 }

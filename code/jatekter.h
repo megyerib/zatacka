@@ -1,20 +1,29 @@
 #pragma once
 #include <SDL.h>
 #include "port.h"
+#include <SDL_ttf.h>
 
 class Jatekter
 {
 public:
     Jatekter(SDL_Renderer* renderer);
 
-    int Torol();
-    int Keret();
+    void Torol();
+    void Keret();
 
-    int Megjelenit();
+    void Megjelenit();
+    void TmpMegjelenit();
+
+    void UjKorSzoveg(bool megjelenit);
 
     SDL_Rect pozicio; // Pozíció a renderer-en
+    SDL_Rect font_pozicio;
 
 private:
     SDL_Renderer* renderer;
     SDL_Texture* texture;
+    SDL_Texture* tmp;
+    TTF_Font* font;
+
+    bool uj_kor_szoveg = true;
 };

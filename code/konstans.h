@@ -69,3 +69,5 @@ struct MenuAllapot
     bool jatekos_aktiv[Jatekosok];
     JatekModNev jatekmod;
 };
+
+static char FONT_UTVONAL[] = "res/font_hun.ttf";
