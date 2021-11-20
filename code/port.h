@@ -152,7 +152,6 @@ void SetLength(vector<T>& vec, int len)
 
 int Max(int a, int b);
 void MessageBox(string szoveg, string cim);
-void Sleep(int ms);
 int Random(int to);
 void Randomize();
 string IntToStr(int i);

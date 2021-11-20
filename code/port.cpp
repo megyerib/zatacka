@@ -11,19 +11,14 @@ void MessageBox(string szoveg, string cim)
 
 }
 
-void Sleep(int ms)
-{
-
-}
-
 int Random(int to)
 {
-    return 0;
+    return ((float)rand() / RAND_MAX) * to;
 }
 
 void Randomize()
 {
-
+    srand(time(NULL));
 }
 
 string IntToStr(int i)

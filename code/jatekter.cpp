@@ -17,7 +17,7 @@ Jatekter::Jatekter(SDL_Renderer* renderer)
 
     texture = SDL_CreateTexture(
         renderer,
-        SDL_PIXELFORMAT_RGB24,
+        SDL_PIXELFORMAT_RGBA32,
         SDL_TEXTUREACCESS_TARGET,
         pozicio.w,
         pozicio.h
@@ -74,6 +74,41 @@ void Jatekter::Keret()
     boxColor(renderer, pozicio.w - KeretSzeles, 0, pozicio.w - 1, pozicio.h - 1, clWhite);
 
     SDL_SetRenderTarget(renderer, NULL);
+}
+
+void Jatekter::Kor(int x, int y, int r, int vastag, TColor szin)
+{
+    int r_k = r + (vastag / 2);
+    int r_b = r_k - vastag;
+    r_b = (r_b) > 0 ? r_b : 0;
+
+    SDL_Rect dst = {
+        .x = x - r_k,
+        .y = y - r_k,
+        .w = 2 * r_k + 1,
+        .h = 2 * r_k + 1,
+    };
+    
+    SDL_Texture* kor_textura = SDL_CreateTexture(
+        renderer,
+        SDL_PIXELFORMAT_RGBA32,
+        SDL_TEXTUREACCESS_TARGET,
+        dst.w,
+        dst.h
+    );
+
+    SDL_SetRenderTarget(renderer, kor_textura);
+
+    filledCircleColor(renderer, r_k, r_k, r_k, szin);
+    filledCircleColor(renderer, r_k, r_k, r_b, clBlack); // TODO: legyen átlátszó
+
+    SDL_SetRenderTarget(renderer, texture);
+
+    SDL_RenderCopy(renderer, kor_textura, NULL, &dst);
+
+    SDL_SetRenderTarget(renderer, NULL);
+
+    SDL_DestroyTexture(kor_textura);
 }
 
 void Jatekter::UjKorSzoveg(bool megjelenit)

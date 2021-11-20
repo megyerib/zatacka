@@ -16,7 +16,7 @@ Menu::Menu(SDL_Renderer* renderer)
 
     texture = SDL_CreateTexture(
         renderer,
-        SDL_PIXELFORMAT_RGB24,
+        SDL_PIXELFORMAT_RGBA32,
         SDL_TEXTUREACCESS_TARGET,
         pozicio.w,
         pozicio.h

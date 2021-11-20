@@ -10,6 +10,7 @@ public:
 
     void Torol();
     void Keret();
+    void Kor(int x, int y, int r, int vastag, TColor szin);
 
     void Megjelenit();
     void TmpMegjelenit();
