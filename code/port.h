@@ -108,10 +108,8 @@ public:
 class TLabel : public TObject
 {
 public:
-    TObject Parent;
     string Caption;
     TLabel(){}
-    TLabel(TForm &form);
 
     int Left;
     int Top;
@@ -124,9 +122,6 @@ public:
     bool AutoSize;
     TAlignment Alignment;
     bool Transparent;
-
-    void (TForm::*OnMouseDown)(TObject, TMouseButton, TShiftState, int, int);
-    void (TForm::*OnMouseUp)(TObject, TMouseButton, TShiftState, int, int);
 };
 class TImage
 {

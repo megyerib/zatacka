@@ -231,9 +231,8 @@ void TForm1::FormCreate(TObject Sender)
 
     for (int x = 0; x < Jatekosok; x++) {
         // Pontszám labelek előkészítése
-        //PontLabel[x] = new TLabel(Form1);
+        PontLabel[x] = new TLabel();
 
-        PontLabel[x]->Parent = Panel1;
         PontLabel[x]->Caption = '0';
         PontLabel[x]->Left = 75;
         PontLabel[x]->Top = 66 * x - 50;
@@ -243,13 +242,10 @@ void TForm1::FormCreate(TObject Sender)
         PontLabel[x]->Font.Color = Szinek[x];
         PontLabel[x]->Transparent = true;
         PontLabel[x]->Hide();
-        PontLabel[x]->OnMouseDown = &TForm::FormMouseDown;
-        PontLabel[x]->OnMouseUp = &TForm::FormMouseUp;
 
         // 'Aktív' labelek előkészítése a menüben
-        //PanelLabel[x] = new TLabel(Form1);
+        PanelLabel[x] = new TLabel();
 
-        PanelLabel[x]->Parent = GroupBox2;
         PanelLabel[x]->Caption = "Aktív";
         PanelLabel[x]->Left = 106;
         PanelLabel[x]->Top = 20 * (x + 1);
@@ -257,8 +253,6 @@ void TForm1::FormCreate(TObject Sender)
         PanelLabel[x]->AutoSize = true;
         PanelLabel[x]->Font.Color = Szinek[x];
         PanelLabel[x]->Hide();
-        PanelLabel[x]->OnMouseDown = &TForm::FormMouseDown;
-        PanelLabel[x]->OnMouseUp = &TForm::FormMouseUp;
 
         // Csinálunk egy Vastagsag * Vastagsag méretű négyzetet.
         // Ezt pötyögtetjük rá később a BitKep-re, amikor haladunk.
@@ -668,10 +662,10 @@ void TForm1::FormKeyDown(SDL_Keycode Key)
     if (Panel2.Visible) {
         // A játékosok kiválasztják, hogy szeretnének-e játszani
         for (int a = 0; a < Jatekosok; a++) {
-            if (Key=Jatekos[a].Gomb[bal]) {
+            if (Key == Jatekos[a].Gomb[bal]) {
                 PanelLabel[a]->Show();
             }
-            if (Key=Jatekos[a].Gomb[jobb]) {
+            if (Key == Jatekos[a].Gomb[jobb]) {
                 PanelLabel[a]->Hide();
             }
         }

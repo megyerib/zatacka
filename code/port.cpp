@@ -81,11 +81,6 @@ void TImageList::GetBitmap(int, TBitmap*)
 
 }
 
-TLabel::TLabel(TForm&)
-{
-
-}
-
 void TObject::Hide()
 {
 
