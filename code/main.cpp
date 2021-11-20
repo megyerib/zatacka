@@ -92,7 +92,6 @@ public:
     TLabel LabelMod4;    // 'Falnélküli mód (F4)'
     TLabel Label8;       // 'keret nincs, a pályán ciklikusan át lehet menni (a golyók nem mozognak ciklikusan)'
     TLabel Label12;      // 'Kanyar - Lövés'
-    TLabel NewRaceLabel; // 'Új menethez szóköz...'
 
     JatekAllapot allapot = MENU;
     MenuAllapot menu_allapot = {
@@ -101,7 +100,7 @@ public:
     };
 
     void NewFegyver(int a);
-    static TKettoSzin SzineketSzamol(int x, int y, int szam);
+    TKettoSzin SzineketSzamol(int x, int y, int szam);
     void FormCreate();
     void UresImage(bool Torol, bool VanKeret);
     void Timer1Timer();
@@ -211,22 +210,21 @@ void TFegyver::Destroy()
 // hány olyan pixel van, ami nem fekete? (szam == játékos száma)
 TKettoSzin TForm1::SzineketSzamol(int x, int y, int szam)
 {
-    TKettoSzin e;
-
-    TColor c2 = Szinek[szam];
-    e.SajatSzin = 0;
-    e.NemFekete = 0;
+    TKettoSzin e = {
+        .SajatSzin = 0,
+        .NemFekete = 0
+    };
 
     for (int a = x; a < x + Vastagsag; a++) {
         for (int b = y; b < y + Vastagsag; b++) {
-            TColor c = BitKep->Canvas.Pixels[a][b];
+            uint32_t c = jatekter.Szin(a, b);
             if ((a >= KepSzeles) || (b >= KepMagas)) {
                 continue; // Ha a képpont kívül esik a tartományon, akkor nem kell vizsgálni.
             }
-            if (c == c2) {
+            if (c == Szinek[szam]) {
                 e.SajatSzin++;
             }
-            else if (c != TColor::clBlack) {
+            else if (c != clBlack) {
                 e.NemFekete++;
             }
         }
@@ -429,11 +427,11 @@ void TForm1::Timer1Timer()
             if ((x < 10) || (x > KepSzeles - 10) || (y < 10) || (y > KepMagas - 10)) {
                 for (int p = -1; p <= 1; p++) {
                     for (int q = -1; q <= 1; q++) {
-                        BitKep->Canvas.Draw(x + p * KepSzeles, y + q * KepMagas, bmpVonalFekete);
+                        jatekter.Pont(x + p * KepSzeles, y + q * KepMagas, clBlack);
                     }
                 }
             } else {
-                BitKep->Canvas.Draw(x, y, bmpVonalFekete);
+                jatekter.Pont(x, y, clBlack);
             }
         }
 
@@ -518,11 +516,15 @@ void TForm1::Timer1Timer()
 
             // senki nincs már életben
             if (p <= 1) {
+                printf("Kör vége\n");
                 Timer1.Enabled = false;
                 if (q < (PanelJatszoEmberek - 1) * 25) {
-                    //NewRaceLabel.Show(); TODO: 'Új menethez szóköz...'
+                    jatekter.UjKorSzoveg(true);
+                    allapot = UJ_KOR;
                 } else {
+                    printf("Játék vége\n");
                     PanelLabelHideAll();
+                    allapot = MENU;
                 }
                 PaintBoxRajzol(); // hogy az utolsó halálfej is kirajzolódjon
                 return;
@@ -559,12 +561,12 @@ void TForm1::Timer1Timer()
         if ((x < 10) || (x > KepSzeles - 10) || (y < 10) || (y > KepMagas - 10)) { // Itt is lehet egy kicsit finomítani
             for (int p = -1; p <= 1; p++) {
                 for (int q = -1; q <= 1; q++) {
-                    BitKep->Canvas.Draw(x + p * KepSzeles, y + q * KepMagas, Jatekos[a].bmpVonal);
+                    jatekter.Pont(x + p * KepSzeles, y + q * KepMagas, Szinek[a]);
                 }
             }
         } else {
             // Játéktér közepén vagyunk
-            BitKep->Canvas.Draw(x, y, Jatekos[a].bmpVonal);
+            jatekter.Pont(x, y, Szinek[a]);
         }
 
         // Öröklődő mód:
@@ -670,7 +672,7 @@ void TForm1::FormKeyDown(SDL_Keycode Key)
             Jatekos[a].Engedett = menu_allapot.jatekos_aktiv[a];
         }
         JatekosokatLerak();
-        //NewRaceLabel.Hide(); TODO:
+        jatekter.UjKorSzoveg(false);
         allapot = JATEK;
         UjMenet();
     }
@@ -793,6 +795,7 @@ void TForm1::FormClose(TCloseAction Action)
 void TForm1::UjMenet()
 {
     allapot = JATEK;
+    jatekter.UjKorSzoveg(false);
     printf("Új menet\n");
     
     // Visszaállítjuk a játékosok fegyverét (akkor aktív a fegyver, ha épp van golyó a pályán)
@@ -830,6 +833,8 @@ void TForm1::UjMenet()
     SetLength(arrSzurkePixelek, 0);
     Timer1.Tag = 0;
     Timer1.Enabled = true;
+
+    SDL_FlushEvent(SDL_USEREVENT); // Az eddigi timer leütéseket töröljük
 }
 
 // Kirajzolja a menüt resetelt játékosokkal
@@ -839,8 +844,7 @@ void TForm1::PanelLabelHideAll()
         menu_allapot.jatekos_aktiv[a] = false;
     }
     menu_allapot.jatekmod = STANDARD;
-    // NewRaceLabel.Hide(); TODO:
-    // TODO: menu.ujrarajzol
+    jatekter.UjKorSzoveg(true);
 }
 
 // Akkor van rendben az aktív játékosok helyzete, ha a távolságuk
@@ -881,16 +885,19 @@ void TForm1::JatekosokatLerak()
 // Az állandó bitképet rárajzoljuk az ideiglenesre, mellé a halálfejeket, majd az egészet a képernyőre.
 void TForm1::PaintBoxRajzol()
 {
-    /*BitKep2->Canvas.Draw(0, 0, BitKep);
-    for (int x = 0; x < Jatekosok; x++) {
-        if (Jatekos[x].Halalfej.Idozites > 0) {
-            BitKep2->Canvas.Draw(Jatekos[x].Halalfej.Coord_TopLeft.X, Jatekos[x].Halalfej.Coord_TopLeft.Y, Jatekos[x].bmpHalalfej);
-            Jatekos[x].Halalfej.Idozites--;
-        }
+    switch (allapot)
+    {
+    case JATEK:
+    case UJ_KOR:
+        jatekter.Megjelenit();
+        break;
+    
+    case MENU:
+        jatekter.Megjelenit();
+        menu.Ujrarajzol();
+        break;
     }
-    PaintBox2.Canvas.Draw(0, 0, BitKep2);*/
 
-    jatekter.Megjelenit();
     SDL_RenderPresent(renderer);
 }
 
@@ -903,6 +910,13 @@ void TForm1::PaintBoxOnPaint()
 // Ablakméret teszteléshez
 const int WINDOW_WIDTH = 1024;
 const int WINDOW_HEIGHT = 768;
+
+Uint32 idozit(Uint32 ms, void *param) {
+    SDL_Event ev;
+    ev.type = SDL_USEREVENT;
+    SDL_PushEvent(&ev);
+    return ms;   /* ujabb varakozas */
+}
 
 int main()
 {
@@ -922,6 +936,8 @@ int main()
         exit(1);
     }
     SDL_RenderClear(renderer);
+
+    SDL_TimerID id = SDL_AddTimer(JATEK_PERIODUS, idozit, NULL);
 
     TForm1 main_form(renderer);
 
@@ -949,6 +965,10 @@ int main()
 
         case SDL_MOUSEBUTTONUP:
             main_form.FormMouseUp(event.button.button, event.button.x, event.button.y);
+            break;
+        
+        case SDL_USEREVENT:
+            main_form.Timer1Timer();
             break;
 
         case SDL_QUIT:

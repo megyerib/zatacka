@@ -44,7 +44,6 @@ void Jatekter::TmpMegjelenit()
         SDL_Surface *felirat;
         SDL_Texture *felirat_t;
 
-        /* ha sajat kodban hasznalod, csinalj belole fuggvenyt! */
         SDL_Color feher = {0xFF, 0xFF, 0xFF, 0xFF};
         felirat = TTF_RenderUTF8_Blended(font, "Új menethez szóköz...", feher);
         felirat_t = SDL_CreateTextureFromSurface(renderer, felirat);
@@ -109,6 +108,35 @@ void Jatekter::Kor(int x, int y, int r, int vastag, TColor szin)
     SDL_SetRenderTarget(renderer, NULL);
 
     SDL_DestroyTexture(kor_textura);
+}
+
+void Jatekter::Pont(int x, int y, TColor szin)
+{
+    SDL_SetRenderTarget(renderer, texture);
+
+    boxColor(renderer, x, y, x + Vastagsag - 1, y + Vastagsag - 1, szin);
+
+    SDL_SetRenderTarget(renderer, NULL);
+}
+
+// TODO: Ezt SDL-ben nem igazán így kell csinálni
+uint32_t Jatekter::Szin(int x, int y)
+{
+    SDL_Rect px = {
+        .x = x,
+        .y = y,
+        .w = 1,
+        .h = 1
+    };
+
+    uint32_t data;
+    int pitch = pozicio.w * 4;
+    
+    SDL_SetRenderTarget(renderer, texture);
+    SDL_RenderReadPixels(renderer, &px, SDL_PIXELFORMAT_RGBA32, &data, pitch);
+    SDL_SetRenderTarget(renderer, NULL);
+
+    return data | 0xFF000000; // Csalunk egy kicsit az alfával
 }
 
 void Jatekter::UjKorSzoveg(bool megjelenit)

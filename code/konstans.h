@@ -30,6 +30,7 @@ const int Vastagsag = 4; // nem lehet több 10-nél, különben a falnélküli m
 const int VastagsagDelta = 2; // (Vastagsag-1) div 2
 const int MinimalisJatekos = 1;
 const int KeretSzeles = 7; // Vastag keret szélessége
+const int JATEK_PERIODUS = 24; // [ms]
 
 enum JatekModNev {
     STANDARD = 0,

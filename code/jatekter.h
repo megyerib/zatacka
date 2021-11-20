@@ -11,6 +11,8 @@ public:
     void Torol();
     void Keret();
     void Kor(int x, int y, int r, int vastag, TColor szin);
+    void Pont(int x, int y, TColor szin);
+    uint32_t Szin(int x, int y);
 
     void Megjelenit();
     void TmpMegjelenit();
