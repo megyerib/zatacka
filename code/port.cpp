@@ -81,16 +81,6 @@ void TImageList::GetBitmap(int, TBitmap*)
 
 }
 
-void TObject::Hide()
-{
-
-}
-
-void TObject::Show()
-{
-
-}
-
 TPoint::TPoint()
 {
 

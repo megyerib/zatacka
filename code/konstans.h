@@ -66,7 +66,7 @@ enum JatekAllapot
 struct MenuAllapot
 {
     bool jatekos_aktiv[Jatekosok];
-    TJatekMod jatekmod;
+    JatekModNev jatekmod;
 };
 
 const std::string strSzabalyok =

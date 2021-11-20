@@ -28,26 +28,12 @@ enum TFontStyle
     fsBold
 };
 
-enum TMouseButton
-{
-    mbLeft,
-    mbRight,
-    mbMiddle
-};
-
 enum TShiftState
 {
     state
 };
 
 // class
-class TObject
-{
-public:
-    bool Visible;
-    void Show();
-    void Hide();
-};
 class TPoint
 {
 public:
@@ -88,15 +74,13 @@ public:
     TPixelFormat PixelFormat;
 };
 
-class TForm : public TObject
+class TForm
 {
 public:
-    virtual void FormMouseDown(TObject Sender, TMouseButton Button, TShiftState Shift, int X, int Y) = 0;
-    virtual void FormMouseUp(TObject Sender, TMouseButton Button, TShiftState Shift, int X, int Y) = 0;
     void Close();
     void ShowCursor(bool show);
 };
-class TPanel : public TObject
+class TPanel
 {
 };
 class TImageList
@@ -105,7 +89,7 @@ public:
     void GetBitmap(int i, TBitmap *bitmap);
 };
 
-class TLabel : public TObject
+class TLabel
 {
 public:
     string Caption;
@@ -131,7 +115,7 @@ class TPaintBox
 public:
     TCanvas Canvas;
 };
-class TGroupBox : public TObject
+class TGroupBox
 {
 public:
     int Tag;
@@ -141,18 +125,12 @@ class TCloseAction
 {
 };
 
-class TTriggerable
-{
-public:
-    virtual void OnTimer(TObject Sender) = 0;
-};
-
 class TTimer
 {
 public:
     TTimer() {}
     int Interval;
-    void (TTriggerable::*OnTimer)(TObject);
+    //void (TTriggerable::*OnTimer)(TObject);
     bool Enabled;
     int Tag; // Ez valami számláló lesz
     void Free();

@@ -51,3 +51,8 @@ int Eredmenyjelzo::Keret()
 
     return 0;
 }
+
+int Eredmenyjelzo::Frissit(int jatekos, int pont)
+{
+    return 0;
+}

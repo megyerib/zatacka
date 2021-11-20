@@ -7,6 +7,7 @@ public:
     Eredmenyjelzo(SDL_Renderer* renderer);
     int Kirajzol();
     int Ujrarajzol();
+    int Frissit(int jatekos, int pont);
 
 private:
     SDL_Renderer* renderer;
