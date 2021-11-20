@@ -7,6 +7,7 @@
 #include "eredmenyjelzo.h"
 #include "jatekter.h"
 #include "menu.h"
+#include "szabalyok.h"
 
 using namespace std;
 
@@ -403,6 +404,10 @@ void TForm1::UresImage(bool Torol, bool VanKeret)
 // Üt a timer, történnek az időfüggő dolgok
 void TForm1::Timer1Timer()
 {
+    if(allapot != JATEK) {
+        return;
+    }
+    
     Timer1.Tag = (Timer1.Tag + 1) % 70;
 
     for (int a = 0; a < Jatekosok; a++) {
@@ -586,10 +591,10 @@ void TForm1::FormKeyDown(SDL_Keycode Key)
 
     // F10 -> szabályok
     if (Key == SDLK_F10) {
-        bool l = Timer1.Enabled; // letároljuk a Timer állapotát...
-        Timer1.Enabled = false;
-        MessageBox(strSzabalyok, "Játékszabályok");
-        Timer1.Enabled = l; // ...majd visszaállítjuk
+        JatekAllapot elozo = allapot;
+        allapot = SZABALYOK;
+        Szabalyok szabalyok_ablak;
+        allapot = elozo;
     }
 
     // Ha a menüben vagyunk, lekezeljük a játékmód változását.

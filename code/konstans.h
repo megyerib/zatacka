@@ -60,7 +60,8 @@ enum JatekAllapot
     MENU,
     JATEK,
     UJ_KOR,
-    VEGE
+    VEGE,
+    SZABALYOK, // Szabályok ablak megjelenítése
 };
 
 struct MenuAllapot
@@ -68,11 +69,3 @@ struct MenuAllapot
     bool jatekos_aktiv[Jatekosok];
     JatekModNev jatekmod;
 };
-
-const std::string strSzabalyok =
-   "  A vezérlés részben látja a vezérlőgombokat. Nyomja meg valamelyik sor első vezérlőgombját (egérnél bal gomb), így a gombhoz tartozó játékost aktiválja, aki részt vesz majd a játékban. "
-   "A játékos kikapcsolásához nyomja meg a játékoshoz tartozó második gombot (egérnél jobb gomb).\r\n\r\n"
-   "  A játék indítása után az első és második gombobbal irányíthatja a játékos színével megegyező színű vonalat. A cél, hogy ne ütközzön falba vagy egy másik vonalba. Amikor egy vonal falba ütközik, a még játékban lévő játékosok 2-2 pontot kapnak.\r\n"
-   "  A vonalakban peridodikusan lyukak vannak (kivéve egyes módokat), amiken át lehet menni.\r\n\r\n"
-   "  Játék közben a harmadik vezérlőgomb (egérnél középső gomb) használatával lehet lőni: ez annyit jelent, hogy a játékos vonalából a haladási iránnyal megegyező irányban egy vörös golyó indul el, utat csinálva ezáltal a játékosnak.\r\n"
-   "  Egy játékosnak egyszerre egy golyója lehet a képernyőn. Egy golyó kilövése 1 pontba kerül, és legalább ennyi szükséges a kilövéshez.";
