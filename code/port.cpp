@@ -26,11 +26,6 @@ void Randomize()
 
 }
 
-int Ord(char c)
-{
-    return 0;
-}
-
 string IntToStr(int i)
 {
     return string("%d", i);

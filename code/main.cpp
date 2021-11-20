@@ -98,8 +98,8 @@ public:
     void FormCreate(TObject Sender);
     void UresImage(bool Torol, bool VanKeret);
     void Timer1Timer(TObject Sender);
-    void FormKeyDown(TObject Sender, int Key, TShiftState Shift);
-    void FormKeyUp(TObject Sender, int Key, TShiftState Shift);
+    void FormKeyDown(SDL_Keycode Key);
+    void FormKeyUp(SDL_Keycode Key);
     void FormMouseDown(TObject Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
     void FormMouseUp(TObject Sender, TMouseButton Button, TShiftState Shift, int X, int Y);
     void FormClose(TObject Sender, TCloseAction Action);
@@ -342,29 +342,29 @@ void TForm1::FormCreate(TObject Sender)
     Randomize(); // Randomgenerátor init
 
     // Gombok beállítása
-    Jatekos[0].Gomb[bal] = Ord('1');
-    Jatekos[0].Gomb[jobb] = Ord('Q');
-    Jatekos[0].Gomb[loves] = Ord('2');
+    Jatekos[0].Gomb[bal]   = SDLK_1;
+    Jatekos[0].Gomb[jobb]  = SDLK_q;
+    Jatekos[0].Gomb[loves] = SDLK_2;
 
-    Jatekos[1].Gomb[bal] = 17;
-    Jatekos[1].Gomb[jobb] = 18;
-    Jatekos[1].Gomb[loves] = Ord('X');
+    Jatekos[1].Gomb[bal]   = SDLK_LCTRL;
+    Jatekos[1].Gomb[jobb]  = SDLK_LALT;
+    Jatekos[1].Gomb[loves] = SDLK_x;
 
-    Jatekos[2].Gomb[bal] = Ord('4');
-    Jatekos[2].Gomb[jobb] = Ord('5');
-    Jatekos[2].Gomb[loves] = Ord('R');
+    Jatekos[2].Gomb[bal]   = SDLK_4;
+    Jatekos[2].Gomb[jobb]  = SDLK_5;
+    Jatekos[2].Gomb[loves] = SDLK_r;
 
-    Jatekos[3].Gomb[bal] = Ord('M');
-    Jatekos[3].Gomb[jobb] = 188;
-    Jatekos[3].Gomb[loves] = Ord('K');
+    Jatekos[3].Gomb[bal]   = SDLK_m;
+    Jatekos[3].Gomb[jobb]  = SDLK_COMMA;
+    Jatekos[3].Gomb[loves] = SDLK_k;
 
-    Jatekos[4].Gomb[bal] = VK_LEFT;
-    Jatekos[4].Gomb[jobb] = VK_DOWN;
-    Jatekos[4].Gomb[loves] = VK_UP;
+    Jatekos[4].Gomb[bal]   = SDLK_LEFT;
+    Jatekos[4].Gomb[jobb]  = SDLK_DOWN;
+    Jatekos[4].Gomb[loves] = SDLK_UP;
 
-    Jatekos[5].Gomb[bal] = VK_DIVIDE;
-    Jatekos[5].Gomb[jobb] = VK_MULTIPLY;
-    Jatekos[5].Gomb[loves] = VK_SUBTRACT;
+    Jatekos[5].Gomb[bal]   = SDLK_SLASH;
+    Jatekos[5].Gomb[jobb]  = SDLK_ASTERISK;
+    Jatekos[5].Gomb[loves] = SDLK_MINUS;
 
     // Kép törlése
     UresImage(true, AktualisMod.VanKeret);
@@ -572,11 +572,11 @@ void TForm1::Timer1Timer(TObject Sender)
 }
 
 // Megnyomtunk egy gombot
-void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
+void TForm1::FormKeyDown(SDL_Keycode Key)
 {
     // ESC
     // Játék -> Menü -> Kilépés
-    if (Key == VK_ESCAPE) {
+    if (Key == SDLK_ESCAPE) {
         if (Panel2.Visible) {
             Close();
         } else {
@@ -586,7 +586,7 @@ void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
     }
 
     // F10 -> szabályok
-    if (Key == VK_F10) {
+    if (Key == SDLK_F10) {
         bool l = Timer1.Enabled; // letároljuk a Timer állapotát...
         Timer1.Enabled = false;
         MessageBox(strSzabalyok, "Játékszabályok");
@@ -597,16 +597,16 @@ void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
     if (Panel2.Visible) {
         int a = 0;
 
-        if (Key == VK_F1) {
+        if (Key == SDLK_F1) {
             a = 1;
         }
-        if (Key == VK_F2) {
+        if (Key == SDLK_F2) {
             a = 2;
         }
-        if (Key == VK_F3) {
+        if (Key == SDLK_F3) {
             a = 3;
         }
-        if (Key == VK_F4) {
+        if (Key == SDLK_F4) {
             a = 4;
         }
 
@@ -654,7 +654,7 @@ void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
     }
 
     // Játszunk és új kör kezdődne (space-re kezdődik)
-    if ((Key = VK_SPACE) && NewRaceLabel.Visible) {
+    if ((Key = SDLK_SPACE) && NewRaceLabel.Visible) {
         UresImage(AktualisMod.UjMenetnelTorol, AktualisMod.VanKeret);
         for (int a = 0; a < Jatekosok; a++) {
             Jatekos[a].Engedett = PanelLabel[a]->Visible;
@@ -676,7 +676,7 @@ void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
             }
         }
         // ============ ÚJ MENET INDUL, változók beállítása ============
-        if (Key == VK_SPACE)
+        if (Key == SDLK_SPACE)
         {
             PanelJatszoEmberek = 0;
             for (int a = 0; a < Jatekosok; a++) {
@@ -705,7 +705,7 @@ void TForm1::FormKeyDown(TObject Sender, int Key, TShiftState Shift)
 }
 
 // Felengedtük a gombot -> Játék közben visszaállunk egyenesbe
-void TForm1::FormKeyUp(TObject Sender, int Key, TShiftState Shift)
+void TForm1::FormKeyUp(SDL_Keycode Key)
 {
     if (Timer1.Enabled) {
         for (int a = 0; a < Jatekosok; a++) {
@@ -918,10 +918,20 @@ int main()
     SDL_RenderPresent(renderer);
 
     /* varunk a kilepesre */
-    SDL_Event ev;
     bool quit = false;
-    while (!quit && SDL_WaitEvent(&ev)) {
-        switch (ev.type) {
+    while (!quit) {
+        SDL_Event event;
+        SDL_WaitEvent(&event);
+
+        switch (event.type) {
+        case SDL_KEYUP:
+            main_form.FormKeyUp(event.key.keysym.sym);
+            break;
+            
+        case SDL_KEYDOWN:
+            main_form.FormKeyDown(event.key.keysym.sym);
+            break;
+        
         case SDL_QUIT:
             quit = true;
             break;

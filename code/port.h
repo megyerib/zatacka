@@ -5,22 +5,6 @@
 
 using namespace std;
 
-// define
-
-#define VK_LEFT 0
-#define VK_DOWN 0
-#define VK_UP 0
-#define VK_DIVIDE 0
-#define VK_MULTIPLY 0
-#define VK_SUBTRACT 0
-#define VK_ESCAPE 0
-#define VK_F10 0
-#define VK_F1 0
-#define VK_F2 0
-#define VK_F3 0
-#define VK_F4 0
-#define VK_SPACE 0
-
 // enum
 
 enum TBrushStyle
@@ -198,7 +182,6 @@ void MessageBox(string szoveg, string cim);
 void Sleep(int ms);
 int Random(int to);
 void Randomize();
-int Ord(char c);
 string IntToStr(int i);
 int Round(double r);
 
