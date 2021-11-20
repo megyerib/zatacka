@@ -6,6 +6,7 @@
 #include <cstdio>
 #include "eredmenyjelzo.h"
 #include "jatekter.h"
+#include "menu.h"
 
 using namespace std;
 
@@ -908,6 +909,9 @@ int main()
 
     main_form.UresImage(false, true);
     main_form.jatekter.Megjelenit();
+
+    Menu menu(renderer);
+    menu.Ujrarajzol();
 
     /* az elvegzett rajzolasok a kepernyore */
     SDL_RenderPresent(renderer);

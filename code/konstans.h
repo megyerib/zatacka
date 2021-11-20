@@ -16,6 +16,7 @@ enum TColor
     clWhite   = 0xFFFFFFFF,
     clMaroon  = 0xFF000080,
     clSilver  = 0xFFA0A0A0,
+    clGray    = 0xFF202020, // Menü
 };
 
 const int EREDMJ_SZ = 120; // Eredményjelző szélessége [px]
@@ -52,6 +53,20 @@ const TJatekMod JatekMod[JATEKMOD_SZAM] = {
     [FOLYTONOS]  = {.SzaggatasTag = 70, .StartPont = 3, .UjMenetnelTorol = true,  .VanKeret = true,  /*.LyukPont = false*/},
     [OROKLODO]   = {.SzaggatasTag = 26, .StartPont = 0, .UjMenetnelTorol = false, .VanKeret = true,  /*.LyukPont = false*/},
     [FALNELKULI] = {.SzaggatasTag = 66, .StartPont = 0, .UjMenetnelTorol = true,  .VanKeret = false, /*.LyukPont = true*/}
+};
+
+enum JatekAllapot
+{
+    MENU,
+    JATEK,
+    UJ_KOR,
+    VEGE
+};
+
+struct MenuAllapot
+{
+    bool jatekos_aktiv[Jatekosok];
+    TJatekMod jatekmod;
 };
 
 const std::string strSzabalyok =
