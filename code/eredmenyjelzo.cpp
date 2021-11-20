@@ -1,6 +1,5 @@
 #include "eredmenyjelzo.h"
 #include <SDL2_gfxPrimitives.h>
-#include "log.h"
 #include "konstans.h"
 
 Eredmenyjelzo::Eredmenyjelzo(SDL_Renderer* renderer)
@@ -23,8 +22,6 @@ Eredmenyjelzo::Eredmenyjelzo(SDL_Renderer* renderer)
         pozicio.w,
         pozicio.h
     );
-
-    Ujrarajzol();
 }
 
 int Eredmenyjelzo::Kirajzol()
@@ -34,27 +31,23 @@ int Eredmenyjelzo::Kirajzol()
 
 int Eredmenyjelzo::Ujrarajzol()
 {
-    int error = 0;
-    
-    error = error || SDL_SetRenderTarget(renderer, texture) SDL_LOG_ERROR;
+    SDL_SetRenderTarget(renderer, texture);
 
-    error = error || Keret();
+    Keret();
 
-    error = error || SDL_SetRenderTarget(renderer, NULL) SDL_LOG_ERROR;
-    error = error || SDL_RenderCopy(renderer, texture, NULL, &pozicio) SDL_LOG_ERROR;
+    SDL_SetRenderTarget(renderer, NULL);
+    SDL_RenderCopy(renderer, texture, NULL, &pozicio);
 
-    return error;
+    return 0;
 }
 
 int Eredmenyjelzo::Keret()
 {
-    int error = 0;
+    lineColor(renderer, 0, 0, 0, pozicio.h - 1, clWhite);
+    lineColor(renderer, 0, 0, pozicio.w - 1, 0, clWhite);
 
-    error = error || lineColor(renderer, 0, 0, 0, pozicio.h - 1, clWhite) SDL_LOG_ERROR;
-    error = error || lineColor(renderer, 0, 0, pozicio.w - 1, 0, clWhite) SDL_LOG_ERROR;
+    lineColor(renderer, pozicio.w - 1, 0, pozicio.w - 1, pozicio.h - 1, clSilver);
+    lineColor(renderer, 0, pozicio.h - 1, pozicio.w - 1, pozicio.h - 1, clSilver);
 
-    error = error || lineColor(renderer, pozicio.w - 1, 0, pozicio.w - 1, pozicio.h - 1, clSilver) SDL_LOG_ERROR;
-    error = error || lineColor(renderer, 0, pozicio.h - 1, pozicio.w - 1, pozicio.h - 1, clSilver) SDL_LOG_ERROR;
-
-    return error;
+    return 0;
 }

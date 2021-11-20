@@ -902,6 +902,7 @@ int main()
  
     /* csinaljunk valamit */
     Eredmenyjelzo eredmenyjelzo(renderer);
+    eredmenyjelzo.Ujrarajzol();
 
     TForm1 main_form(renderer);
 

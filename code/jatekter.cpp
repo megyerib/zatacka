@@ -1,7 +1,6 @@
 #include "jatekter.h"
 #include "konstans.h"
 #include <SDL2_gfxPrimitives.h>
-#include "log.h"
 
 Jatekter::Jatekter(SDL_Renderer* renderer)
 {
@@ -27,18 +26,18 @@ Jatekter::Jatekter(SDL_Renderer* renderer)
 
 int Jatekter::Megjelenit()
 {
-    return SDL_RenderCopy(renderer, texture, NULL, &pozicio) SDL_LOG_ERROR;
+    return SDL_RenderCopy(renderer, texture, NULL, &pozicio);
 }
 
 int Jatekter::Torol()
 {
-    int error = SDL_SetRenderTarget(renderer, texture);
+    SDL_SetRenderTarget(renderer, texture);
 
     boxColor(renderer, 0, 0, pozicio.w - 1, pozicio.h - 1, clBlack);
 
-    error = error || SDL_SetRenderTarget(renderer, NULL);
+    SDL_SetRenderTarget(renderer, NULL);
 
-    return error;
+    return 0;
 }
 
 int Jatekter::Keret()
