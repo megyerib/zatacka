@@ -143,7 +143,6 @@ TJatekos Jatekos[Jatekosok];
 int KepSzeles; // Képernyő szélessége - jobb oldali 120 pixeles eredményjelző
 int KepMagas; // Képernyő magassága
 int PanelJatszoEmberek; // Összes résztvevő (ebből számoljuk ki a nyeréshez szükséges pontszámot stb.)
-TLabel PontLabel[Jatekosok]; // Ez mutatja jobb oldalon a pontszámot
 TLabel PanelLabel[Jatekosok]; // Ez mutatja a menüben, hogy aktív-e egy játékos
 TBitmap* BitKep; // Alap bitkép
 TBitmap* BitKep2; // Ideiglenes bitkép, kb. BitKep + halálfejek, ezt rajzoljuk a képernyőre.
@@ -161,7 +160,9 @@ void TForm1::NewFegyver(int a)
 {
     if (!Jatekos[a].Fegyver && Jatekos[a].Pont >= 1 && Jatekos[a].Engedett) {
         Jatekos[a].Pont--;
-        PontLabel[a].Caption = IntToStr(Jatekos[a].Pont);
+        eredmenyjelzo.Beallit(a, Jatekos[a].Pont, true);
+        eredmenyjelzo.Kirajzol();
+
         Jatekos[a].Fegyver = new TFegyver(Round(Jatekos[a].HelyX), Round(Jatekos[a].HelyY), Jatekos[a].Irany, a);
     }
 }
@@ -242,16 +243,6 @@ void TForm1::FormCreate()
     PanelJatszoEmberek = 0; // Összes résztvevő
 
     for (int x = 0; x < Jatekosok; x++) {
-        // Pontszám labelek előkészítése
-        PontLabel[x].Caption = '0';
-        PontLabel[x].Left = 75;
-        PontLabel[x].Top = 66 * x - 50;
-        PontLabel[x].Font.Size = 40;
-        PontLabel[x].AutoSize = true;
-        PontLabel[x].Alignment = taRightJustify;
-        PontLabel[x].Font.Color = Szinek[x];
-        PontLabel[x].Transparent = true;
-
         // 'Aktív' labelek előkészítése a menüben
         PanelLabel[x].Caption = "Aktív";
         PanelLabel[x].Left = 106;
@@ -488,11 +479,13 @@ void TForm1::Timer1Timer()
                     // ha egy golyó okozta a játékos halálát, akkor a golyó tulajdonosa további pontokat kap
                     // mivel a meghalt játékost már letiltottuk, ezért ha véletlenül a saját golyójától hal meg, nincs pont
                     Jatekos[b].Pont += 2;
-                    PontLabel[b].Caption = IntToStr(Jatekos[b].Pont);
+                    eredmenyjelzo.Beallit(b, Jatekos[b].Pont, true);
                     p++;
                 }
                 q = Max(q, Jatekos[b].Pont);
             }
+
+            eredmenyjelzo.Kirajzol();
 
             // senki nincs már életben
             if (p <= 1) {
@@ -691,12 +684,11 @@ void TForm1::FormKeyDown(SDL_Keycode Key)
                 jatekter.Megjelenit(); // Elrejtjük a menüt
                 for (int a = 0; a < Jatekosok; a++) {
                     Jatekos[a].Engedett = menu_allapot.jatekos_aktiv[a];
-                    //PontLabel[a]->Visible = Jatekos[a].Engedett; // Pontszám megjelenítése
                     Jatekos[a].Pont = AktualisMod.StartPont;
-                    PontLabel[a].Caption = IntToStr(AktualisMod.StartPont);
+                    eredmenyjelzo.Beallit(a, Jatekos[a].Pont, Jatekos[a].Engedett);
                     Jatekos[a].Halalfej.Idozites = 0;
                 }
-                // TODO: Eredményjelző megjelenítése
+                eredmenyjelzo.Kirajzol();
                 JatekosokatLerak();
                 UjMenet();
             }

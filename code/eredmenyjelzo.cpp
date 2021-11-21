@@ -3,6 +3,8 @@
 #include "konstans.h"
 #include <cstdio>
 
+const int JOBB_MARGO = 18;
+
 Eredmenyjelzo::Eredmenyjelzo(SDL_Renderer* renderer)
 {
     this->renderer = renderer;
@@ -30,7 +32,7 @@ Eredmenyjelzo::Eredmenyjelzo(SDL_Renderer* renderer)
         TTF_Init();
     }
 
-    font = TTF_OpenFont(FONT_UTVONAL, 40);
+    font = TTF_OpenFont(FONT_UTVONAL, 40); // TODO: A valóságban miért nem ekkora?
 }
 
 void Eredmenyjelzo::Kirajzol()
@@ -79,6 +81,10 @@ void Eredmenyjelzo::FeliratokatRajzol()
     SDL_SetRenderTarget(renderer, overlay);
     
     for(int i = 0; i < Jatekosok; i++) {
+        if(!eng[i]) {
+            continue;
+        }
+        
         SDL_Surface *felirat;
         SDL_Texture *felirat_t;
 
@@ -95,13 +101,14 @@ void Eredmenyjelzo::FeliratokatRajzol()
 
         SDL_QueryTexture(felirat_t, NULL, NULL, &text_w, &text_h);
 
-        SDL_Rect font_poz = {
-            .x = 75,
-            .y = 66 * i + 50,
-            .w = text_w,
-            .h = text_h,
-        };
-        
+        printf("w = %d, h = %d\n", text_w, text_h);
+
+        SDL_Rect font_poz;
+        font_poz.w = text_w * 60 / text_h;
+        font_poz.h = 60; // Valamiért így lesz 40 pixel magas.
+        font_poz.x = EREDMJ_SZ - JOBB_MARGO - font_poz.w; // Jobbra zárt
+        font_poz.y = 66 * i + 50;
+       
         SDL_RenderCopy(renderer, felirat_t, NULL, &font_poz);
         SDL_FreeSurface(felirat);
         SDL_DestroyTexture(felirat_t);
