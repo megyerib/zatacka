@@ -15,7 +15,8 @@ enum TColor
     clBlack   = 0xFF000000,
     clWhite   = 0xFFFFFFFF,
     clMaroon  = 0xFF000080,
-    clSilver  = 0xFFA0A0A0,
+    clSilver  = 0xFFC0C0C0,
+    clLGray   = 0xFFA0A0A0,
     clGray    = 0xFF202020, // Menü
 };
 

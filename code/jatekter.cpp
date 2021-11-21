@@ -226,5 +226,28 @@ void Jatekter::HalalfejInit()
 
 void Jatekter::Szurkit()
 {
+    // Mondd ki háromszor egymás után, hogy szürke surface
+    SDL_Surface* surface = SDL_CreateRGBSurfaceWithFormat(0, pozicio.w, pozicio.h, 0, SDL_PIXELFORMAT_RGBA32);
+
     SDL_SetRenderTarget(renderer, texture);
+
+    SDL_RenderReadPixels(renderer, &pozicio, SDL_PIXELFORMAT_RGBA32, surface->pixels, surface->pitch);
+
+    int pixel_num = surface->w * surface->h;
+    uint32_t* pixels = (uint32_t*)surface->pixels;
+
+    for(int p = 0; p < pixel_num; p++) {
+        if(pixels[p] != clBlack) {
+            pixels[p] = clSilver;
+        }
+    }
+
+    SDL_Texture* szurke = SDL_CreateTextureFromSurface(renderer, surface);
+
+    SDL_RenderCopy(renderer, szurke, NULL, &pozicio);
+
+    SDL_SetRenderTarget(renderer, NULL);
+
+    SDL_DestroyTexture(szurke);
+    SDL_FreeSurface(surface);
 }

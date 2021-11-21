@@ -492,7 +492,6 @@ void TForm1::FormKeyDown(SDL_Keycode Key)
 
     // Játszunk és új kör kezdődne (space-re kezdődik)
     if ((Key == SDLK_SPACE) && (allapot == UJ_KOR)) {
-        UresImage(AktualisMod.UjMenetnelTorol, AktualisMod.VanKeret);
         for (int a = 0; a < Jatekosok; a++) {
             Jatekos[a].Engedett = menu_allapot.jatekos_aktiv[a];
         }
@@ -630,6 +629,8 @@ void TForm1::UjMenet()
             }
         }
     }
+
+    UresImage(AktualisMod.UjMenetnelTorol, AktualisMod.VanKeret);
 
     // Lerakjuk a játékosokat
     do {

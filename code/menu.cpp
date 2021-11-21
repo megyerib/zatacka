@@ -36,8 +36,8 @@ int Menu::Ujrarajzol()
     boxColor(renderer, 0, 0, pozicio.w - 1, pozicio.h - 1, clGray);
     lineColor(renderer, 0, 0, 0, pozicio.h - 1, clWhite);
     lineColor(renderer, 0, 0, pozicio.w - 1, 0, clWhite);
-    lineColor(renderer, pozicio.w - 1, 0, pozicio.w - 1, pozicio.h - 1, clSilver);
-    lineColor(renderer, 0, pozicio.h - 1, pozicio.w - 1, pozicio.h - 1, clSilver);
+    lineColor(renderer, pozicio.w - 1, 0, pozicio.w - 1, pozicio.h - 1, clLGray);
+    lineColor(renderer, 0, pozicio.h - 1, pozicio.w - 1, pozicio.h - 1, clLGray);
 
     SDL_SetRenderTarget(renderer, NULL);
     SDL_RenderCopy(renderer, texture, NULL, &pozicio);
