@@ -13,6 +13,7 @@ public:
     void Kor(int x, int y, int r, int vastag, TColor szin);
     void Pont(int x, int y, TColor szin);
     uint32_t Szin(int x, int y);
+    void Halalfej(int jatekos, bool eng, int x = 0, int y = 0);
 
     void Megjelenit();
     void TmpMegjelenit();
@@ -28,6 +29,18 @@ private:
     SDL_Texture* texture;
     SDL_Texture* tmp;
     TTF_Font* font;
+    SDL_Texture* halalfej;
 
     bool uj_kor_szoveg = true;
+
+    struct {
+        int x;
+        int y;
+        bool eng;
+    } halalfej_adat[Jatekosok];
+
+    int halalfej_w;
+    int halalfej_h;
+
+    void HalalfejInit();
 };

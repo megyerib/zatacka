@@ -15,7 +15,6 @@ using namespace std;
 
 // Halálfej adatai (nem a bitmap)
 struct THalalfej {
-    TPoint Coord_TopLeft;
     int Idozites; // Ennyi idő múlva tűnik el a halálfej
 };
 
@@ -266,6 +265,7 @@ void TForm1::FormCreate()
         }*/
 
         Jatekos[x].Halalfej.Idozites = 0;
+        jatekter.Halalfej(x, false);
     }
 
     //létrehozzuk a fő Bitmap-eket
@@ -356,6 +356,12 @@ void TForm1::Timer1Timer()
         if(Jatekos[a].Fegyver) { // Akkor is repül tovább a golyó, ha a gazdája már meghalt
             FegyverTimer(&Jatekos[a].Fegyver);
         }
+
+        if(Jatekos[a].Halalfej.Idozites > 0) {
+            Jatekos[a].Halalfej.Idozites--;
+        } else {
+            jatekter.Halalfej(a, false);
+        }
     }
 
     for (int a = 0; a < Jatekosok; a++) {
@@ -429,8 +435,8 @@ void TForm1::Timer1Timer()
             Jatekos[a].Engedett = false; // Játékos deaktiválása
 
             // Halálfej bekapcsolása
-            Jatekos[a].Halalfej.Coord_TopLeft = TPoint(x-25,y-24);
             Jatekos[a].Halalfej.Idozites = 50;
+            jatekter.Halalfej(a, true, x, y);
 
             // a még élő játékosok pontokat kapnak
             int p = 0;
@@ -660,6 +666,7 @@ void TForm1::FormKeyDown(SDL_Keycode Key)
                     Jatekos[a].Pont = AktualisMod.StartPont;
                     eredmenyjelzo.Beallit(a, Jatekos[a].Pont, Jatekos[a].Engedett);
                     Jatekos[a].Halalfej.Idozites = 0;
+                    jatekter.Halalfej(a, false);
                 }
                 eredmenyjelzo.Kirajzol();
                 JatekosokatLerak();
@@ -825,6 +832,7 @@ void TForm1::JatekosokatLerak()
             delete Jatekos[a].Fegyver;
             Jatekos[a].Fegyver = NULL;
             Jatekos[a].Halalfej.Idozites = 0;
+            jatekter.Halalfej(a, false);
         }
     } while (!JatekosPozicioRendben());
 }

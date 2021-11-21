@@ -1,6 +1,7 @@
 #include "jatekter.h"
 #include "konstans.h"
 #include <SDL2_gfxPrimitives.h>
+#include <SDL_image.h>
 
 Jatekter::Jatekter(SDL_Renderer* renderer)
 {
@@ -33,6 +34,8 @@ Jatekter::Jatekter(SDL_Renderer* renderer)
     }
 
     font = TTF_OpenFont(FONT_UTVONAL, 43);
+
+    HalalfejInit();
 }
 
 void Jatekter::Megjelenit()
@@ -43,6 +46,29 @@ void Jatekter::Megjelenit()
 
 void Jatekter::TmpMegjelenit()
 {
+    SDL_Texture* overlay = SDL_CreateTexture(
+        renderer,
+        SDL_PIXELFORMAT_RGBA32,
+        SDL_TEXTUREACCESS_TARGET,
+        pozicio.w,
+        pozicio.h
+    );
+    SDL_SetTextureBlendMode(overlay, SDL_BLENDMODE_BLEND);
+
+    SDL_SetRenderTarget(renderer, overlay);
+    
+    for(int i = 0; i < Jatekosok; i++) {
+        if(halalfej_adat[i].eng) {
+            SDL_Rect rect = {
+                .x = halalfej_adat[i].x - halalfej_w / 2,
+                .y = halalfej_adat[i].y - halalfej_h / 2,
+                .w = halalfej_w,
+                .h = halalfej_h,
+            };
+            SDL_RenderCopy(renderer, halalfej, NULL, &rect);
+        }
+    }
+    
     if(uj_kor_szoveg) {
         SDL_Surface *felirat;
         SDL_Texture *felirat_t;
@@ -55,6 +81,10 @@ void Jatekter::TmpMegjelenit()
         SDL_FreeSurface(felirat);
         SDL_DestroyTexture(felirat_t);
     }
+
+    SDL_SetRenderTarget(renderer, NULL);
+    SDL_RenderCopy(renderer, overlay, NULL, &pozicio);
+    SDL_DestroyTexture(overlay);
 }
 
 void Jatekter::Golyo(int x, int y, uint32_t szin)
@@ -156,7 +186,21 @@ uint32_t Jatekter::Szin(int x, int y)
     return data | 0xFF000000; // Csalunk egy kicsit az alfával
 }
 
+void Jatekter::Halalfej(int jatekos, bool eng, int x, int y)
+{
+    halalfej_adat[jatekos].x = x;
+    halalfej_adat[jatekos].y = y;
+    halalfej_adat[jatekos].eng = eng;
+}
+
 void Jatekter::UjKorSzoveg(bool megjelenit)
 {
     uj_kor_szoveg = megjelenit;
+}
+
+void Jatekter::HalalfejInit()
+{
+    halalfej = IMG_LoadTexture(renderer, HALALFEJ_UTVONAL);
+
+    SDL_QueryTexture(halalfej, NULL, NULL, &halalfej_w, &halalfej_h);
 }
