@@ -29,7 +29,7 @@ private:
     SDL_Texture* texture;
     SDL_Texture* tmp;
     TTF_Font* font;
-    SDL_Texture* halalfej;
+    SDL_Texture* halalfej[Jatekosok];
 
     bool uj_kor_szoveg = true;
 

@@ -65,7 +65,7 @@ void Jatekter::TmpMegjelenit()
                 .w = halalfej_w,
                 .h = halalfej_h,
             };
-            SDL_RenderCopy(renderer, halalfej, NULL, &rect);
+            SDL_RenderCopy(renderer, halalfej[i], NULL, &rect);
         }
     }
     
@@ -200,7 +200,25 @@ void Jatekter::UjKorSzoveg(bool megjelenit)
 
 void Jatekter::HalalfejInit()
 {
-    halalfej = IMG_LoadTexture(renderer, HALALFEJ_UTVONAL);
+    SDL_Surface* raw = IMG_Load(HALALFEJ_UTVONAL);
+    SDL_Surface* alap = SDL_ConvertSurfaceFormat(raw, SDL_PIXELFORMAT_RGBA32, 0);
 
-    SDL_QueryTexture(halalfej, NULL, NULL, &halalfej_w, &halalfej_h);
+    halalfej_w = alap->w;
+    halalfej_h = alap->h;
+
+    uint32_t prev_color = clWhite;
+    uint32_t* pixels = (uint32_t*)alap->pixels;
+
+    for(int i = 0; i < Jatekosok; i++) {
+        for(int p = 0; p < alap->w * alap->h; p++) {
+            if(pixels[p] == prev_color) {
+                pixels[p] = Szinek[i];
+            }
+        }
+        halalfej[i] = SDL_CreateTextureFromSurface(renderer, alap);
+        prev_color = Szinek[i];
+    }
+
+    SDL_FreeSurface(raw);
+    SDL_FreeSurface(alap);
 }
