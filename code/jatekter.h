@@ -16,6 +16,7 @@ public:
 
     void Megjelenit();
     void TmpMegjelenit();
+    void Golyo(int x, int y, uint32_t szin);
 
     void UjKorSzoveg(bool megjelenit);
 

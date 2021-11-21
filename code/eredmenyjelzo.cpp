@@ -101,8 +101,6 @@ void Eredmenyjelzo::FeliratokatRajzol()
 
         SDL_QueryTexture(felirat_t, NULL, NULL, &text_w, &text_h);
 
-        printf("w = %d, h = %d\n", text_w, text_h);
-
         SDL_Rect font_poz;
         font_poz.w = text_w * 60 / text_h;
         font_poz.h = 60; // Valamiért így lesz 40 pixel magas.

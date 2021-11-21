@@ -57,6 +57,20 @@ void Jatekter::TmpMegjelenit()
     }
 }
 
+void Jatekter::Golyo(int x, int y, uint32_t szin)
+{
+    SDL_SetRenderTarget(renderer, texture);
+
+    if(szin != clBlack) {
+        filledCircleColor(renderer, x, y, 9, clMaroon); // Ha nem fekete a golyó, rajzolunk neki barna szegélyt
+        filledCircleColor(renderer, x, y, 7, szin);
+    } else {
+        filledCircleColor(renderer, x, y, 9, clBlack);
+    }
+
+    SDL_SetRenderTarget(renderer, NULL);
+}
+
 void Jatekter::Torol()
 {
     SDL_SetRenderTarget(renderer, texture);

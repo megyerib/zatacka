@@ -29,12 +29,10 @@ class TFegyver
 public:
     TTimer Timer;
     int Szog;
-    int Szam; // a játékos száma
+    int Szam; // a tulajdonos száma
     double X;
     double Y;
     TFegyver(int x, int y, int irany, int Tulaj);
-    void OnTimer();
-    void Destroy();
 };
 
 // Vektor típus a lyukakon átbújáshoz (nem használt)
@@ -55,7 +53,6 @@ struct TJatekos {
    TFegyver* Fegyver; // == kilőtt golyó
    THalalfej Halalfej; // Halálfej adatai (nem a bitmap)
    TBitmap* bmpHalalfej; // Színes halálfej. Ezt a bitmapet rajzoljuk ki, amikor a játékos meghalt.
-   TBitmap* PuffBitmap; // erre van kirajzolva a golyó
 };
 
 class TForm1 : public TForm
@@ -116,6 +113,7 @@ public:
     void JatekosokatLerak();
     void PaintBoxRajzol();
     void PaintBoxOnPaint();
+    void FegyverTimer(TFegyver** fegyver);
     
     TForm1(SDL_Renderer* renderer);
 
@@ -150,7 +148,6 @@ vector<TPoint> arrSzurkePixelek; // Falnélküli módban itt tároljuk a bejárt
 //vector<TVektor> arrLyukak;
 int Lyukak_SzaggatasFele; // a szaggatás középpontjának a Timer.Tag-je
 TJatekMod AktualisMod;
-TBitmap* PuffBitmap0; // Fekete kör, amivel ki lehet törölni az előző golyót.
 
 // implementation
 
@@ -175,36 +172,33 @@ TFegyver::TFegyver(int x, int y, int Irany, int Tulaj)
     X = x + cos_fok(Szog) * 18;
     Y = y - sin_fok(Szog) * 18;
     Szam = Tulaj;
-
-    Timer.Interval = Timer1.Interval;
-    //Timer.OnTimer = &TTriggerable::OnTimer; TODO: timerbe bekötni a fegyvert
 }
 
 // Lépteti a fegyvert/golyót
-// A golyó akkor is létezhet, ha a tulajdonosa már meghalt, ezért érdemes külön tárolni.
-void TFegyver::OnTimer()
+void TForm1::FegyverTimer(TFegyver** fegyver_ptr)
 {
-    BitKep->Canvas.Draw(Round(X) - 9, Round(Y) - 9, PuffBitmap0); // kitöröljük a golyót az előző helyről
-    if (!Timer1.Enabled) { // Ha nem játszunk, a golyót sem léptetjük tovább
-        Timer.Enabled = false;
+    if(fegyver_ptr == nullptr || *fegyver_ptr == nullptr) {
+        return;
+    }
+
+    TFegyver* fegyver = *fegyver_ptr;
+
+    jatekter.Golyo(fegyver->X, fegyver->Y, clBlack); // kitöröljük a golyót az előző helyről
+    if (allapot != JATEK) { // Ha nem játszunk, a golyót sem léptetjük tovább
+        delete fegyver;
+        *fegyver_ptr = NULL;
         return;
     }
     // Kiszámoljuk a golyó új helyét
-    X += cos_fok(Szog) * FegyverSebesseg;
-    Y -= sin_fok(Szog) * FegyverSebesseg;
-    Timer.Tag++;
-    // Kirajzoljuk a golyót az új helyén
-    BitKep->Canvas.Draw(Round(X) - 9, Round(Y) - 9, Jatekos[Szam].PuffBitmap);
-    if ((X < -10) || (Y < -10) || (X > KepSzeles + 10) || (Y > KepMagas + 10)) {
-        Destroy();
-    }
-}
+    fegyver->X += cos_fok(fegyver->Szog) * FegyverSebesseg;
+    fegyver->Y -= sin_fok(fegyver->Szog) * FegyverSebesseg;
 
-// Letiltja a golyót, törli a timerét
-void TFegyver::Destroy()
-{
-    Timer.Enabled = false;
-    Timer.Free();
+    // Kirajzoljuk a golyót az új helyén
+    jatekter.Golyo(fegyver->X, fegyver->Y, Szinek[fegyver->Szam]);
+    if ((fegyver->X < -10) || (fegyver->Y < -10) || (fegyver->X > KepSzeles + 10) || (fegyver->Y > KepMagas + 10)) {
+        delete fegyver;
+        *fegyver_ptr = NULL;
+    }
 }
 
 // Adott x, y ponttól 'Vastagsag' lépésnyire jobbra és lefele
@@ -286,34 +280,6 @@ void TForm1::FormCreate()
     BitKep2->Width = KepSzeles;
     BitKep2->Height = KepMagas;
 
-    //létrehozzuk a golyók Bitmap-jét
-    //PuffBitmap0: fekete golyó
-    PuffBitmap0 = new TBitmap(); // Ez a fekete golyóé
-    PuffBitmap0->Width = 19;
-    PuffBitmap0->Height = 19;
-    PuffBitmap0->Canvas.Brush.Color = clWhite;
-    PuffBitmap0->Canvas.Pen.Color = clWhite;
-    PuffBitmap0->Canvas.Rectangle(0, 0, 19, 19);
-    PuffBitmap0->Canvas.Pen.Color = clBlack;
-    PuffBitmap0->Canvas.Brush.Color = clBlack;
-    PuffBitmap0->Canvas.Pen.Width = 2;
-    PuffBitmap0->Canvas.Ellipse(0,0,19,19);
-    PuffBitmap0->Transparent = true; // A sarokban lévő szín a transparent vagy mi?
-
-    for (int x = 0; x < Jatekosok; x++) { // Ez a játékosok színes golyóié, ezeket fogjuk kirajzolni, ha lőnek.
-        Jatekos[x].PuffBitmap = new TBitmap();
-
-        Jatekos[x].PuffBitmap->Width = 19;
-        Jatekos[x].PuffBitmap->Height = 19;
-        Jatekos[x].PuffBitmap->Canvas.Brush.Color = clBlack;
-        Jatekos[x].PuffBitmap->Canvas.Rectangle(0, 0, 19, 19);
-        Jatekos[x].PuffBitmap->Canvas.Pen.Color = clMaroon;
-        Jatekos[x].PuffBitmap->Canvas.Brush.Color = Szinek[x];
-        Jatekos[x].PuffBitmap->Canvas.Pen.Width = 2;
-        Jatekos[x].PuffBitmap->Canvas.Ellipse(0, 0, 19, 19);
-        Jatekos[x].PuffBitmap->Transparent = true;
-    }
-
     Randomize(); // Randomgenerátor init
 
     // Gombok beállítása
@@ -384,6 +350,12 @@ void TForm1::Timer1Timer()
     }
     
     Timer1.Tag = (Timer1.Tag + 1) % 70;
+
+    for (int a = 0; a < Jatekosok; a++) {
+        if(Jatekos[a].Fegyver) { // Akkor is repül tovább a golyó, ha a gazdája már meghalt
+            FegyverTimer(&Jatekos[a].Fegyver);
+        }
+    }
 
     for (int a = 0; a < Jatekosok; a++) {
         // nem aktív játékos átlépése
@@ -756,12 +728,10 @@ void TForm1::FormClose(TCloseAction Action)
 {
     for (int a = 0; a < Jatekosok; a++) {
         delete Jatekos[a].bmpHalalfej;
-        delete Jatekos[a].PuffBitmap;
     }
 
     delete BitKep;
     delete BitKep2;
-    delete PuffBitmap0;
 }
 
 // Új menet (nem új játék)
@@ -775,6 +745,7 @@ void TForm1::UjMenet()
     for (int a = 0; a < Jatekosok; a++) {
         if (Jatekos[a].Fegyver) {
             delete Jatekos[a].Fegyver;
+            Jatekos[a].Fegyver = NULL;
         }
     }
 
@@ -851,6 +822,7 @@ void TForm1::JatekosokatLerak()
             Jatekos[a].HelyY = Random(KepMagas - 240) + 120;
             Jatekos[a].Kanyar = 0;
             delete Jatekos[a].Fegyver;
+            Jatekos[a].Fegyver = NULL;
             Jatekos[a].Halalfej.Idozites = 0;
         }
     } while (!JatekosPozicioRendben());
