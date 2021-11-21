@@ -169,8 +169,9 @@ void TForm1::NewFegyver(int a)
 TFegyver::TFegyver(int x, int y, int Irany, int Tulaj)
 {
     Szog = Irany;
-    X = x + cos_fok(Szog) * 18;
-    Y = y - sin_fok(Szog) * 18;
+    double offset = (Vastagsag / 2.0) - 0.5; // A pixelpaca közepéről induljon a golyó
+    X = x + offset + cos_fok(Szog) * 18;
+    Y = y + offset - sin_fok(Szog) * 18;
     Szam = Tulaj;
 }
 
