@@ -28,7 +28,10 @@ Jatekter::Jatekter(SDL_Renderer* renderer)
     font_pozicio.w = 415;
     font_pozicio.h = 52;
 
-    TTF_Init();
+    if(!TTF_WasInit()) {
+        TTF_Init();
+    }
+
     font = TTF_OpenFont(FONT_UTVONAL, 43);
 }
 

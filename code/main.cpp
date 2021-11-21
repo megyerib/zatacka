@@ -54,7 +54,6 @@ struct TJatekos {
    int Pont; // Pontszám
    TFegyver* Fegyver; // == kilőtt golyó
    THalalfej Halalfej; // Halálfej adatai (nem a bitmap)
-   TBitmap* bmpVonal; // Vastagsag * Vastagsag méretű négyzet. Ezt pötyögtetjük rá később a BitKep-re, amikor haladunk.
    TBitmap* bmpHalalfej; // Színes halálfej. Ezt a bitmapet rajzoljuk ki, amikor a játékos meghalt.
    TBitmap* PuffBitmap; // erre van kirajzolva a golyó
 };
@@ -92,6 +91,8 @@ public:
     TLabel LabelMod4;    // 'Falnélküli mód (F4)'
     TLabel Label8;       // 'keret nincs, a pályán ciklikusan át lehet menni (a golyók nem mozognak ciklikusan)'
     TLabel Label12;      // 'Kanyar - Lövés'
+
+    bool kilepes = false;
 
     JatekAllapot allapot = MENU;
     MenuAllapot menu_allapot = {
@@ -146,7 +147,6 @@ TLabel PontLabel[Jatekosok]; // Ez mutatja jobb oldalon a pontszámot
 TLabel PanelLabel[Jatekosok]; // Ez mutatja a menüben, hogy aktív-e egy játékos
 TBitmap* BitKep; // Alap bitkép
 TBitmap* BitKep2; // Ideiglenes bitkép, kb. BitKep + halálfejek, ezt rajzoljuk a képernyőre.
-TBitmap* bmpVonalFekete;
 vector<TPoint> arrSzurkePixelek; // Falnélküli módban itt tároljuk a bejárt pixeleket. Csak falnélküli módban írunk bele.
 //vector<TVektor> arrLyukak;
 int Lyukak_SzaggatasFele; // a szaggatás középpontjának a Timer.Tag-je
@@ -262,17 +262,6 @@ void TForm1::FormCreate()
 
         menu_allapot.jatekos_aktiv[x] = false;
 
-        // Csinálunk egy Vastagsag * Vastagsag méretű négyzetet.
-        // Ezt pötyögtetjük rá később a BitKep-re, amikor haladunk.
-        // Ez nem fog kelleni, SDL-lel mindig kirajzoljuk ugyanezt a téglalapot.
-        /*Jatekos[x].bmpVonal = new TBitmap();
-
-        Jatekos[x].bmpVonal->Width = Vastagsag;
-        Jatekos[x].bmpVonal->Height = Vastagsag;
-        Jatekos[x].bmpVonal->Canvas.Pen.Color = Szinek[x];
-        Jatekos[x].bmpVonal->Canvas.Brush.Color = Szinek[x];
-        Jatekos[x].bmpVonal->Canvas.Rectangle(0, 0, Vastagsag, Vastagsag);*/
-
         // Megcsináljuk a színes halálfejét minden egyes játékosnak.
         Jatekos[x].bmpHalalfej = new TBitmap();
 
@@ -292,15 +281,6 @@ void TForm1::FormCreate()
 
         Jatekos[x].Halalfej.Idozites = 0;
     }
-
-    // Ugyanaz, mint a játékosoknál a bmpVonal, csak ezt akkor rajzoljuk, amikor szaggatás van.
-    bmpVonalFekete = new TBitmap();
-
-    bmpVonalFekete->Width = Vastagsag;
-    bmpVonalFekete->Height = Vastagsag;
-    bmpVonalFekete->Canvas.Pen.Color = clBlack;
-    bmpVonalFekete->Canvas.Brush.Color =clBlack;
-    bmpVonalFekete->Canvas.Rectangle(0, 0, Vastagsag, Vastagsag);
 
     //létrehozzuk a fő Bitmap-eket
     //BitKep: Ezen van a játék
@@ -590,10 +570,12 @@ void TForm1::FormKeyDown(SDL_Keycode Key)
     // Játék -> Menü -> Kilépés
     if (Key == SDLK_ESCAPE) {
         if (allapot == MENU) {
-            Close();
+            kilepes = true;
         } else {
-            //Timer1.Enabled = false; TODO: játék leállítása
+            allapot = MENU;
             PanelLabelHideAll();
+            jatekter.UjKorSzoveg(true);
+            PaintBoxRajzol();
         }
     }
 
@@ -787,7 +769,6 @@ void TForm1::FormClose(TCloseAction Action)
 
     delete BitKep;
     delete BitKep2;
-    delete bmpVonalFekete;
     delete PuffBitmap0;
 }
 
@@ -821,6 +802,7 @@ void TForm1::UjMenet()
                 jatekter.Kor(Round(Jatekos[b].HelyX), Round(Jatekos[b].HelyY), a, 4, clBlack);
             }
             if (allapot == MENU) { // Visszaléptünk a menübe
+                // TODO: Valahogyan itt lekezelni a kilépést
                 return; //ha ellipszisrajzolás közben nyomtak Escape-t, akkor nem indul a Timer
             }
         }
@@ -946,7 +928,7 @@ int main()
 
     /* varunk a kilepesre */
     bool quit = false;
-    while (!quit) {
+    while (!quit && !main_form.kilepes) {
         SDL_Event event;
         SDL_WaitEvent(&event);
 
