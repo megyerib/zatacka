@@ -150,6 +150,7 @@ void Jatekter::Kor(int x, int y, int r, int vastag, TColor szin)
 
     SDL_SetRenderTarget(renderer, texture);
 
+    SDL_SetTextureBlendMode(kor_textura, SDL_BLENDMODE_BLEND);
     SDL_RenderCopy(renderer, kor_textura, NULL, &dst);
 
     SDL_SetRenderTarget(renderer, NULL);
@@ -183,7 +184,7 @@ uint32_t Jatekter::Szin(int x, int y)
     SDL_RenderReadPixels(renderer, &px, SDL_PIXELFORMAT_RGBA32, &data, pitch);
     SDL_SetRenderTarget(renderer, NULL);
 
-    return data | 0xFF000000; // Csalunk egy kicsit az alfával
+    return data;
 }
 
 void Jatekter::Halalfej(int jatekos, bool eng, int x, int y)
