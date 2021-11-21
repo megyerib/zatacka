@@ -222,3 +222,8 @@ void Jatekter::HalalfejInit()
     SDL_FreeSurface(raw);
     SDL_FreeSurface(alap);
 }
+
+void Jatekter::Szurkit()
+{
+    SDL_SetRenderTarget(renderer, texture);
+}

@@ -21,6 +21,8 @@ public:
 
     void UjKorSzoveg(bool megjelenit);
 
+    void Szurkit();
+
     SDL_Rect pozicio; // Pozíció a renderer-en
     SDL_Rect font_pozicio;
 
