@@ -6,11 +6,6 @@ int Max(int a, int b)
     return (a > b) ? a : b;
 }
 
-void MessageBox(string szoveg, string cim)
-{
-
-}
-
 int Random(int to)
 {
     return ((float)rand() / RAND_MAX) * to;
@@ -19,11 +14,6 @@ int Random(int to)
 void Randomize()
 {
     srand(time(NULL));
-}
-
-string IntToStr(int i)
-{
-    return string("%d", i);
 }
 
 int Round(double r)
@@ -46,47 +36,7 @@ double sqr(double x)
     return x * x;
 }
 
-void TCanvas::Draw(int, int, TBitmap*)
-{
-
-}
-
-void TCanvas::Ellipse(int, int, int, int)
-{
-
-}
-
-void TCanvas::Rectangle(int, int, int, int)
-{
-
-}
-
-void TForm::Close()
-{
-
-}
-
-void TForm::ShowCursor(bool)
-{
-
-}
-
-void TImageList::GetBitmap(int, TBitmap*)
-{
-
-}
-
-TPoint::TPoint()
-{
-
-}
-
 TPoint::TPoint(int, int)
-{
-
-}
-
-void TTimer::Free()
 {
 
 }
