@@ -711,7 +711,7 @@ void TForm1::PaintBoxRajzol()
     
     case MENU:
         jatekter.Draw();
-        menu.Ujrarajzol();
+        menu.Draw();
         break;
     }
 
@@ -798,7 +798,13 @@ int main()
     };
     Jatekter jatekter(renderer, &jatekter_hely);
 
-    Menu menu(renderer);
+    SDL_Rect menu_hely = {
+        .x = 16,
+        .y = 16,
+        .w = 457,
+        .h = 321,
+    };
+    Menu menu(renderer, &menu_hely);
 
     SDL_Rect eredmenyjelzo_hely = {
         .x = renderer_sz - EREDMJ_SZ,

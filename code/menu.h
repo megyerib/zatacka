@@ -1,17 +1,15 @@
 #pragma once
 #include <SDL.h>
 #include "konstans.h"
+#include "two_layer_drawer.h"
 
-class Menu
+class Menu : public TwoLayerDrawer
 {
 public:
-    Menu(SDL_Renderer* renderer);
+    Menu(SDL_Renderer* renderer, const SDL_Rect* pos_on_renderer);
     int Frissit(const MenuAllapot& allapot);
-    int Ujrarajzol();
 
 private:
-    SDL_Renderer* renderer;
-    SDL_Texture* texture;
-
-    SDL_Rect pozicio; // Pozíció a rendereren
+    virtual int DrawBase(SDL_Texture* base) override;
+    virtual int DrawTemp(SDL_Texture* temp) override;
 };
