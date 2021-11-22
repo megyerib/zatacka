@@ -718,10 +718,6 @@ void TForm1::PaintBoxRajzol()
     SDL_RenderPresent(renderer);
 }
 
-// Ablakméret teszteléshez
-const int WINDOW_WIDTH = 1024;
-const int WINDOW_HEIGHT = 768;
-
 Uint32 idozit(Uint32 ms, void *param) {
     SDL_Event ev;
     ev.type = SDL_USEREVENT;
@@ -759,18 +755,20 @@ SDL_Window* CreateFullScreenWindow(char* title)
 
 int main()
 {
-    /* SDL inicializálása és ablak megnyitása */
+    // SDL init
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         SDL_Log("Nem indithato az SDL: %s", SDL_GetError());
         exit(1);
     }
 
+    // Window init
     SDL_Window *window = CreateFullScreenWindow((char*)"Zatacka");
     if (window == NULL) {
         SDL_Log("Nem hozhato letre az ablak: %s", SDL_GetError());
         exit(1);
     }
 
+    // Renderer init
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (renderer == NULL) {
         SDL_Log("Nem hozhato letre a megjelenito: %s", SDL_GetError());
@@ -778,15 +776,15 @@ int main()
     }
     SDL_RenderClear(renderer);
 
+    // Timer
     SDL_TimerID id = SDL_AddTimer(JATEK_PERIODUS, idozit, NULL);
 
+    // Játék osztály indítása
     TForm1 main_form(renderer);
 
-    /* az elvegzett rajzolasok a kepernyore */
-    SDL_RenderPresent(renderer);
-
-    /* varunk a kilepesre */
+    // Event loop
     bool quit = false;
+
     while (!quit && !main_form.kilepes) {
         SDL_Event event;
         SDL_WaitEvent(&event);
@@ -821,7 +819,7 @@ int main()
         }
     }
  
-    /* ablak bezarasa */
+    // Takarítás, kilépés
     SDL_Quit();
  
     return 0;
