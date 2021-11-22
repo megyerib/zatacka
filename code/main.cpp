@@ -1,5 +1,4 @@
 #include "port.h"
-#include "gomb.h"
 #include <vector>
 #include <SDL.h>
 #include <SDL2_gfxPrimitives.h>

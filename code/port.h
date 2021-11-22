@@ -7,6 +7,14 @@ using namespace std;
 
 // enum
 
+enum GombID {
+    bal = 0,
+    jobb,
+    loves,
+
+    gombSzam
+};
+
 enum TFontStyle
 {
     fsNone,
