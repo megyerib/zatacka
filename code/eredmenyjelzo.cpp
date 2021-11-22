@@ -5,29 +5,9 @@
 
 const int JOBB_MARGO = 18;
 
-Eredmenyjelzo::Eredmenyjelzo(SDL_Renderer* renderer)
+Eredmenyjelzo::Eredmenyjelzo(SDL_Renderer* renderer, const SDL_Rect* pos_on_renderer) :
+    TwoLayerDrawer(renderer, pos_on_renderer)
 {
-    this->renderer = renderer;
-
-    int renderer_sz;
-    int renderer_m;
-    SDL_GetRendererOutputSize(renderer, &renderer_sz, &renderer_m);
-    
-    pozicio.x = renderer_sz - EREDMJ_SZ;
-    pozicio.y = 0;
-    pozicio.w = EREDMJ_SZ;
-    pozicio.h = renderer_m;
-
-    alap = SDL_CreateTexture(
-        renderer,
-        SDL_PIXELFORMAT_RGBA32,
-        SDL_TEXTUREACCESS_TARGET,
-        pozicio.w,
-        pozicio.h
-    );
-
-    InitAlap();
-
     if(!TTF_WasInit()) {
         TTF_Init();
     }
@@ -35,25 +15,17 @@ Eredmenyjelzo::Eredmenyjelzo(SDL_Renderer* renderer)
     font = TTF_OpenFont(FONT_UTVONAL, 40); // TODO: A valóságban miért nem ekkora?
 }
 
-void Eredmenyjelzo::Kirajzol()
+int Eredmenyjelzo::DrawBase(SDL_Texture* base)
 {
-    SDL_RenderCopy(renderer, alap, NULL, &pozicio);
-    FeliratokatRajzol();
-}
-
-void Eredmenyjelzo::InitAlap()
-{
-    SDL_SetRenderTarget(renderer, alap);
-
-    boxColor(renderer, 0, 0, pozicio.w, pozicio.h, clBlack);
+    boxColor(renderer, 0, 0, dest_rect.w, dest_rect.h, clBlack);
     
-    lineColor(renderer, 0, 0, 0, pozicio.h - 1, clWhite);
-    lineColor(renderer, 0, 0, pozicio.w - 1, 0, clWhite);
+    lineColor(renderer, 0, 0, 0, dest_rect.h - 1, clWhite);
+    lineColor(renderer, 0, 0, dest_rect.w - 1, 0, clWhite);
 
-    lineColor(renderer, pozicio.w - 1, 0, pozicio.w - 1, pozicio.h - 1, clLGray);
-    lineColor(renderer, 0, pozicio.h - 1, pozicio.w - 1, pozicio.h - 1, clLGray);
+    lineColor(renderer, dest_rect.w - 1, 0, dest_rect.w - 1, dest_rect.h - 1, clLGray);
+    lineColor(renderer, 0, dest_rect.h - 1, dest_rect.w - 1, dest_rect.h - 1, clLGray);
 
-    SDL_SetRenderTarget(renderer, NULL);
+    return 0;
 }
 
 /*
@@ -68,18 +40,8 @@ PontLabel[x].Transparent = true;
 */
 
 // TODO: Úgy rajzolódjon ki, mint az eredeti
-void Eredmenyjelzo::FeliratokatRajzol()
+int Eredmenyjelzo::DrawTemp(SDL_Texture* temp)
 {
-    SDL_Texture* overlay = SDL_CreateTexture(
-        renderer,
-        SDL_PIXELFORMAT_RGBA32,
-        SDL_TEXTUREACCESS_TARGET,
-        pozicio.w,
-        pozicio.h
-    );
-
-    SDL_SetRenderTarget(renderer, overlay);
-    
     for(int i = 0; i < Jatekosok; i++) {
         if(!eng[i]) {
             continue;
@@ -112,10 +74,7 @@ void Eredmenyjelzo::FeliratokatRajzol()
         SDL_DestroyTexture(felirat_t);
     }
 
-    SDL_SetTextureBlendMode(overlay, SDL_BLENDMODE_BLEND);
-    SDL_SetRenderTarget(renderer, NULL);
-    SDL_RenderCopy(renderer, overlay, NULL, &pozicio);
-    SDL_DestroyTexture(overlay);
+    return 0;
 }
 
 void Eredmenyjelzo::Beallit(int jatekos, int pont, bool eng)

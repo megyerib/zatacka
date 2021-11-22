@@ -2,24 +2,20 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include "konstans.h"
+#include "two_layer_drawer.h"
 
-class Eredmenyjelzo
+class Eredmenyjelzo : public TwoLayerDrawer
 {
 public:
-    Eredmenyjelzo(SDL_Renderer* renderer);
-    void Kirajzol();
+    Eredmenyjelzo(SDL_Renderer* renderer, const SDL_Rect* pos_on_renderer);
     void Beallit(int jatekos, int pont, bool eng);
 
 private:
-    SDL_Renderer* renderer;
-    SDL_Texture* alap;
     TTF_Font* font;
-
-    SDL_Rect pozicio; // Pozíció a rendereren
 
     bool eng[Jatekosok] = {false};
     int pont[Jatekosok] = {0};
 
-    void InitAlap();
-    void FeliratokatRajzol();
+    virtual int DrawBase(SDL_Texture* base) override;
+    virtual int DrawTemp(SDL_Texture* temp) override;
 };

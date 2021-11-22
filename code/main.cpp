@@ -115,7 +115,7 @@ TForm1::TForm1(
 {
     FormCreate();
 
-    eredmenyjelzo.Kirajzol();
+    eredmenyjelzo.Draw();
 
     PaintBoxRajzol();
 }
@@ -139,7 +139,7 @@ void TForm1::NewFegyver(int a)
     if (!Jatekos[a].Fegyver && Jatekos[a].Pont >= 1 && Jatekos[a].Engedett) {
         Jatekos[a].Pont--;
         eredmenyjelzo.Beallit(a, Jatekos[a].Pont, true);
-        eredmenyjelzo.Kirajzol();
+        eredmenyjelzo.Draw();
 
         Jatekos[a].Fegyver = new TFegyver(Round(Jatekos[a].HelyX), Round(Jatekos[a].HelyY), Jatekos[a].Irany, a);
     }
@@ -391,7 +391,7 @@ void TForm1::Timer1Timer()
                 q = Max(q, Jatekos[b].Pont);
             }
 
-            eredmenyjelzo.Kirajzol();
+            eredmenyjelzo.Draw();
 
             // senki nincs már életben
             if (p <= 1) {
@@ -535,7 +535,7 @@ void TForm1::FormKeyDown(SDL_Keycode Key)
                     Jatekos[a].Halalfej.Idozites = 0;
                     jatekter.Halalfej(a, false);
                 }
-                eredmenyjelzo.Kirajzol();
+                eredmenyjelzo.Draw();
                 UjMenet();
             }
         }
@@ -800,7 +800,13 @@ int main()
 
     Menu menu(renderer);
 
-    Eredmenyjelzo eredmenyjelzo(renderer);
+    SDL_Rect eredmenyjelzo_hely = {
+        .x = renderer_sz - EREDMJ_SZ,
+        .y = 0,
+        .w = EREDMJ_SZ,
+        .h = renderer_m
+    };
+    Eredmenyjelzo eredmenyjelzo(renderer, &eredmenyjelzo_hely);
 
     // Játék osztály indítása
     TForm1 main_form(renderer, menu, jatekter, eredmenyjelzo);
