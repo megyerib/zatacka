@@ -729,6 +729,34 @@ Uint32 idozit(Uint32 ms, void *param) {
     return ms;   /* ujabb varakozas */
 }
 
+// Csinál egy ablakot azonn a kijelzőn, amelyiken a kurzor van.
+SDL_Window* CreateFullScreenWindow(char* title)
+{
+    int display_num = SDL_GetNumVideoDisplays();
+    SDL_Rect db; // Display bounds
+    int mouse_x, mouse_y;
+
+    SDL_GetGlobalMouseState(&mouse_x, &mouse_y);
+    
+    for(int i = 0; i < display_num; i++) {
+        SDL_GetDisplayBounds(i, &db);
+        if(
+            mouse_x >= db.x &&
+            mouse_x < db.x + db.w &&
+            mouse_y >= db.y &&
+            mouse_y < db.y + db.h
+        ) {
+            break;
+        }
+    }
+
+    return SDL_CreateWindow(
+        title,
+        db.x, db.y, db.w, db.h,
+        SDL_WINDOW_FULLSCREEN
+    );
+}
+
 int main()
 {
     /* SDL inicializálása és ablak megnyitása */
@@ -737,10 +765,7 @@ int main()
         exit(1);
     }
 
-    SDL_DisplayMode dm;
-    SDL_GetCurrentDisplayMode(0, &dm);
-
-    SDL_Window *window = SDL_CreateWindow("Zatacka", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, dm.w, dm.h, SDL_WINDOW_FULLSCREEN);
+    SDL_Window *window = CreateFullScreenWindow((char*)"Zatacka");
     if (window == NULL) {
         SDL_Log("Nem hozhato letre az ablak: %s", SDL_GetError());
         exit(1);
