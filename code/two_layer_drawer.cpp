@@ -14,10 +14,6 @@ TwoLayerDrawer::TwoLayerDrawer(
         dest_rect.w,
         dest_rect.h
     );
-
-    SDL_SetRenderTarget(renderer, base_texture);
-    DrawBase(base_texture);
-    SDL_SetRenderTarget(renderer, NULL);
 }
 
 TwoLayerDrawer::~TwoLayerDrawer()
@@ -27,6 +23,12 @@ TwoLayerDrawer::~TwoLayerDrawer()
 
 int TwoLayerDrawer::Draw()
 {
+    if(first_draw) {
+        SDL_SetRenderTarget(renderer, base_texture);
+        DrawBase(base_texture);
+        first_draw = false;
+    }
+    
     // Copy the base texture onto the renderer
     int ret = SDL_SetRenderTarget(renderer, NULL);
     ret = ret || SDL_RenderCopy(renderer, base_texture, NULL, &dest_rect);

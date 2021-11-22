@@ -9,9 +9,9 @@
 // once, and DrawTemp() draws the temporary texture every time you draw the full
 // image.
 // 
-// The constructor calls DrawBase() which draws the base texture once, then it
-// won't modify it again. Of course, child classes can modify the base texture
-// too, its purpose is only to keep its state between drawings.
+// The DrawBase() function generates the base texture only at the first draw,
+// then it won't be modified again. Of course, child classes can draw on the
+// base texture too, its purpose is only to keep its state between drawings.
 // 
 // When you call the Draw() function it copies the base texture onto the main
 // renderer, then creates a brand new temporary texture then calls the
@@ -41,4 +41,7 @@ protected:
     // If you don't override this function, you probably don't need this class
     // either.
     virtual int DrawTemp(SDL_Texture* temp) = 0;
+
+private:
+    bool first_draw = true;
 };
