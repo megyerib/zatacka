@@ -14,9 +14,9 @@ enum TColor
     clAqua    = 0xFFFFFF00,
     clBlack   = 0xFF000000,
     clWhite   = 0xFFFFFFFF,
-    clMaroon  = 0xFF000080,
-    clSilver  = 0xFFC0C0C0,
-    clLGray   = 0xFFA0A0A0,
+    clMaroon  = 0xFF000080, // Golyó körvonala
+    clSilver  = 0xFFC0C0C0, // Öröklődő módban megmaradt vonalak
+    clLGray   = 0xFFA0A0A0, // Szegélyek
     clGray    = 0xFF202020, // Menü
 };
 
@@ -73,4 +73,6 @@ struct MenuAllapot
 };
 
 static char FONT_UTVONAL[] = "res/font_hun.ttf";
+static char FONT_BOLD_UTVONAL[] = "res/font_bold_hun.ttf";
 static char HALALFEJ_UTVONAL[] = "res/death.png";
+static char LOGO_UTVONAL[] = "res/logo.png";

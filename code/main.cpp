@@ -114,9 +114,6 @@ TForm1::TForm1(
 ) : renderer(renderer), jatekter(jt), eredmenyjelzo(ej), menu(menu)
 {
     FormCreate();
-
-    eredmenyjelzo.Draw();
-
     PaintBoxRajzol();
 }
 
@@ -471,6 +468,9 @@ void TForm1::FormKeyDown(SDL_Keycode Key)
             menu_allapot.jatekmod = FALNELKULI;
             printf("Falnélküli mód\n");
         }
+
+        menu.Frissit(menu_allapot);
+        PaintBoxRajzol();
     }
 
     // Játszunk és a játékosok megnyomták a gombjukat
@@ -512,6 +512,8 @@ void TForm1::FormKeyDown(SDL_Keycode Key)
                 printf("Játékos %d inaktív\n", a);
             }
         }
+        menu.Frissit(menu_allapot);
+        PaintBoxRajzol();
         // ============ ÚJ MENET INDUL, változók beállítása ============
         if (Key == SDLK_SPACE)
         {
@@ -580,6 +582,8 @@ void TForm1::FormMouseDown(uint8_t Button, int32_t X, int32_t Y)
             menu_allapot.jatekos_aktiv[6] = false;
             printf("Játékos %d inaktív\n", 6);
         }
+        menu.Frissit(menu_allapot);
+        PaintBoxRajzol();
     }
 }
 
@@ -707,10 +711,12 @@ void TForm1::PaintBoxRajzol()
     case JATEK:
     case UJ_KOR:
         jatekter.Draw();
+        eredmenyjelzo.Draw();
         break;
     
     case MENU:
         jatekter.Draw();
+        eredmenyjelzo.Draw();
         menu.Draw();
         break;
     }
