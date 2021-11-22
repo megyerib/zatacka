@@ -3,29 +3,11 @@
 #include <SDL2_gfxPrimitives.h>
 #include <SDL_image.h>
 
-Jatekter::Jatekter(SDL_Renderer* renderer)
+Jatekter::Jatekter(SDL_Renderer* renderer, SDL_Rect* pos_on_renderer) :
+    TwoLayerDrawer(renderer, pos_on_renderer)
 {
-    this->renderer = renderer;
-
-    int renderer_sz;
-    int renderer_m;
-    SDL_GetRendererOutputSize(renderer, &renderer_sz, &renderer_m);
-    
-    pozicio.x = 0;
-    pozicio.y = 0;
-    pozicio.w = renderer_sz - EREDMJ_SZ;
-    pozicio.h = renderer_m;
-
-    texture = SDL_CreateTexture(
-        renderer,
-        SDL_PIXELFORMAT_RGBA32,
-        SDL_TEXTUREACCESS_TARGET,
-        pozicio.w,
-        pozicio.h
-    );
-
     font_pozicio.x = 16;
-    font_pozicio.y = pozicio.h - 70;
+    font_pozicio.y = dest_rect.h - 70;
     font_pozicio.w = 415;
     font_pozicio.h = 52;
 
@@ -38,25 +20,8 @@ Jatekter::Jatekter(SDL_Renderer* renderer)
     HalalfejInit();
 }
 
-void Jatekter::Megjelenit()
+int Jatekter::DrawTemp(SDL_Texture* temp)
 {
-    SDL_RenderCopy(renderer, texture, NULL, &pozicio);
-    TmpMegjelenit();
-}
-
-void Jatekter::TmpMegjelenit()
-{
-    SDL_Texture* overlay = SDL_CreateTexture(
-        renderer,
-        SDL_PIXELFORMAT_RGBA32,
-        SDL_TEXTUREACCESS_TARGET,
-        pozicio.w,
-        pozicio.h
-    );
-    SDL_SetTextureBlendMode(overlay, SDL_BLENDMODE_BLEND);
-
-    SDL_SetRenderTarget(renderer, overlay);
-    
     for(int i = 0; i < Jatekosok; i++) {
         if(halalfej_adat[i].eng) {
             SDL_Rect rect = {
@@ -82,14 +47,12 @@ void Jatekter::TmpMegjelenit()
         SDL_DestroyTexture(felirat_t);
     }
 
-    SDL_SetRenderTarget(renderer, NULL);
-    SDL_RenderCopy(renderer, overlay, NULL, &pozicio);
-    SDL_DestroyTexture(overlay);
+    return 0;
 }
 
 void Jatekter::Golyo(int x, int y, uint32_t szin)
 {
-    SDL_SetRenderTarget(renderer, texture);
+    SDL_SetRenderTarget(renderer, base_texture);
 
     if(szin != clBlack) {
         filledCircleColor(renderer, x, y, 9, clMaroon); // Ha nem fekete a golyó, rajzolunk neki barna szegélyt
@@ -103,21 +66,21 @@ void Jatekter::Golyo(int x, int y, uint32_t szin)
 
 void Jatekter::Torol()
 {
-    SDL_SetRenderTarget(renderer, texture);
+    SDL_SetRenderTarget(renderer, base_texture);
 
-    boxColor(renderer, 0, 0, pozicio.w - 1, pozicio.h - 1, clBlack);
+    boxColor(renderer, 0, 0, dest_rect.w - 1, dest_rect.h - 1, clBlack);
 
     SDL_SetRenderTarget(renderer, NULL);
 }
 
 void Jatekter::Keret()
 {
-    SDL_SetRenderTarget(renderer, texture);
+    SDL_SetRenderTarget(renderer, base_texture);
 
-    boxColor(renderer, 0, 0, pozicio.w - 1, KeretSzeles - 1, clWhite);
-    boxColor(renderer, 0, pozicio.h - KeretSzeles, pozicio.w - 1, pozicio.h - 1, clWhite);
-    boxColor(renderer, 0, 0, KeretSzeles - 1, pozicio.h - 1, clWhite);
-    boxColor(renderer, pozicio.w - KeretSzeles, 0, pozicio.w - 1, pozicio.h - 1, clWhite);
+    boxColor(renderer, 0, 0, dest_rect.w - 1, KeretSzeles - 1, clWhite);
+    boxColor(renderer, 0, dest_rect.h - KeretSzeles, dest_rect.w - 1, dest_rect.h - 1, clWhite);
+    boxColor(renderer, 0, 0, KeretSzeles - 1, dest_rect.h - 1, clWhite);
+    boxColor(renderer, dest_rect.w - KeretSzeles, 0, dest_rect.w - 1, dest_rect.h - 1, clWhite);
 
     SDL_SetRenderTarget(renderer, NULL);
 }
@@ -148,7 +111,7 @@ void Jatekter::Kor(int x, int y, int r, int vastag, TColor szin)
     filledCircleColor(renderer, r_k, r_k, r_k, szin);
     filledCircleColor(renderer, r_k, r_k, r_b, clBlack); // TODO: legyen átlátszó
 
-    SDL_SetRenderTarget(renderer, texture);
+    SDL_SetRenderTarget(renderer, base_texture);
 
     SDL_SetTextureBlendMode(kor_textura, SDL_BLENDMODE_BLEND);
     SDL_RenderCopy(renderer, kor_textura, NULL, &dst);
@@ -160,7 +123,7 @@ void Jatekter::Kor(int x, int y, int r, int vastag, TColor szin)
 
 void Jatekter::Pont(int x, int y, TColor szin)
 {
-    SDL_SetRenderTarget(renderer, texture);
+    SDL_SetRenderTarget(renderer, base_texture);
 
     boxColor(renderer, x, y, x + Vastagsag - 1, y + Vastagsag - 1, szin);
 
@@ -178,9 +141,9 @@ uint32_t Jatekter::Szin(int x, int y)
     };
 
     uint32_t data;
-    int pitch = pozicio.w * 4;
+    int pitch = dest_rect.w * 4;
     
-    SDL_SetRenderTarget(renderer, texture);
+    SDL_SetRenderTarget(renderer, base_texture);
     SDL_RenderReadPixels(renderer, &px, SDL_PIXELFORMAT_RGBA32, &data, pitch);
     SDL_SetRenderTarget(renderer, NULL);
 
@@ -227,11 +190,11 @@ void Jatekter::HalalfejInit()
 void Jatekter::Szurkit()
 {
     // Mondd ki háromszor egymás után, hogy szürke surface
-    SDL_Surface* surface = SDL_CreateRGBSurfaceWithFormat(0, pozicio.w, pozicio.h, 0, SDL_PIXELFORMAT_RGBA32);
+    SDL_Surface* surface = SDL_CreateRGBSurfaceWithFormat(0, dest_rect.w, dest_rect.h, 0, SDL_PIXELFORMAT_RGBA32);
 
-    SDL_SetRenderTarget(renderer, texture);
+    SDL_SetRenderTarget(renderer, base_texture);
 
-    SDL_RenderReadPixels(renderer, &pozicio, SDL_PIXELFORMAT_RGBA32, surface->pixels, surface->pitch);
+    SDL_RenderReadPixels(renderer, &dest_rect, SDL_PIXELFORMAT_RGBA32, surface->pixels, surface->pitch);
 
     int pixel_num = surface->w * surface->h;
     uint32_t* pixels = (uint32_t*)surface->pixels;
@@ -244,7 +207,7 @@ void Jatekter::Szurkit()
 
     SDL_Texture* szurke = SDL_CreateTextureFromSurface(renderer, surface);
 
-    SDL_RenderCopy(renderer, szurke, NULL, &pozicio);
+    SDL_RenderCopy(renderer, szurke, NULL, &dest_rect);
 
     SDL_SetRenderTarget(renderer, NULL);
 

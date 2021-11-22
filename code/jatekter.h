@@ -2,11 +2,12 @@
 #include <SDL.h>
 #include "port.h"
 #include <SDL_ttf.h>
+#include "two_layer_drawer.h"
 
-class Jatekter
+class Jatekter : public TwoLayerDrawer
 {
 public:
-    Jatekter(SDL_Renderer* renderer);
+    Jatekter(SDL_Renderer* renderer, SDL_Rect* pos_on_renderer);
 
     void Torol();
     void Keret();
@@ -15,7 +16,6 @@ public:
     uint32_t Szin(int x, int y);
     void Halalfej(int jatekos, bool eng, int x = 0, int y = 0);
 
-    void Megjelenit();
     void TmpMegjelenit();
     void Golyo(int x, int y, uint32_t szin);
 
@@ -23,13 +23,9 @@ public:
 
     void Szurkit();
 
-    SDL_Rect pozicio; // Pozíció a renderer-en
     SDL_Rect font_pozicio;
 
 private:
-    SDL_Renderer* renderer;
-    SDL_Texture* texture;
-    SDL_Texture* tmp;
     TTF_Font* font;
     SDL_Texture* halalfej[Jatekosok];
 
@@ -45,4 +41,6 @@ private:
     int halalfej_h;
 
     void HalalfejInit();
+
+    virtual int DrawTemp(SDL_Texture* temp) override;
 };

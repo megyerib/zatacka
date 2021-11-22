@@ -101,23 +101,23 @@ public:
     void PaintBoxRajzol();
     void FegyverTimer(TFegyver** fegyver);
     
-    TForm1(SDL_Renderer* renderer);
+    TForm1(SDL_Renderer* renderer, Menu& menu, Jatekter& jt, Eredmenyjelzo& ej);
 
     SDL_Renderer* renderer;
-    Eredmenyjelzo eredmenyjelzo;
-    Menu menu;
-    Jatekter jatekter;
+    Eredmenyjelzo& eredmenyjelzo;
+    Menu& menu;
+    Jatekter& jatekter;
 };
 
-TForm1::TForm1(SDL_Renderer* renderer) : renderer(renderer),
-                                         jatekter(renderer),
-                                         eredmenyjelzo(renderer),
-                                         menu(renderer)
+TForm1::TForm1(
+    SDL_Renderer* renderer, Menu& menu, Jatekter& jt, Eredmenyjelzo& ej
+) : renderer(renderer), jatekter(jt), eredmenyjelzo(ej), menu(menu)
 {
     FormCreate();
 
     eredmenyjelzo.Kirajzol();
-    menu.Ujrarajzol();
+
+    PaintBoxRajzol();
 }
 
 // var
@@ -212,8 +212,8 @@ TKettoSzin TForm1::SzineketSzamol(int x, int y, int szam)
 // A Form1 tárolja az egész játékot, ezért kb. ez a függvény inicializál mindent.
 void TForm1::FormCreate()
 {
-    KepSzeles = jatekter.pozicio.w;
-    KepMagas = jatekter.pozicio.h;
+    KepSzeles = jatekter.dest_rect.w;
+    KepMagas = jatekter.dest_rect.h;
 
     PanelJatszoEmberek = 0; // Összes résztvevő
 
@@ -527,7 +527,7 @@ void TForm1::FormKeyDown(SDL_Keycode Key)
             if (PanelJatszoEmberek >= MinimalisJatekos) {
                 AktualisMod = JatekMod[menu_allapot.jatekmod];
                 UresImage(true, AktualisMod.VanKeret); //új játéknál mindig töröljük a pályát
-                jatekter.Megjelenit(); // Elrejtjük a menüt
+                jatekter.Draw(); // Elrejtjük a menüt
                 for (int a = 0; a < Jatekosok; a++) {
                     Jatekos[a].Engedett = menu_allapot.jatekos_aktiv[a];
                     Jatekos[a].Pont = AktualisMod.StartPont;
@@ -706,11 +706,11 @@ void TForm1::PaintBoxRajzol()
     {
     case JATEK:
     case UJ_KOR:
-        jatekter.Megjelenit();
+        jatekter.Draw();
         break;
     
     case MENU:
-        jatekter.Megjelenit();
+        jatekter.Draw();
         menu.Ujrarajzol();
         break;
     }
@@ -786,8 +786,24 @@ int main()
     // Timer
     SDL_TimerID id = SDL_AddTimer(JATEK_PERIODUS, idozit, NULL);
 
+    // Rajzoló panelek helyének kiszámítása
+    int renderer_sz, renderer_m;
+    SDL_GetRendererOutputSize(renderer, &renderer_sz, &renderer_m);
+
+    SDL_Rect jatekter_hely = {
+        .x = 0,
+        .y = 0,
+        .w = renderer_sz - EREDMJ_SZ,
+        .h = renderer_m
+    };
+    Jatekter jatekter(renderer, &jatekter_hely);
+
+    Menu menu(renderer);
+
+    Eredmenyjelzo eredmenyjelzo(renderer);
+
     // Játék osztály indítása
-    TForm1 main_form(renderer);
+    TForm1 main_form(renderer, menu, jatekter, eredmenyjelzo);
 
     // Event loop
     bool quit = false;
