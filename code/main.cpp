@@ -256,9 +256,9 @@ void TForm1::FormCreate()
     Jatekos[4].Gomb[jobb]  = SDLK_DOWN;
     Jatekos[4].Gomb[loves] = SDLK_UP;
 
-    Jatekos[5].Gomb[bal]   = SDLK_SLASH;
-    Jatekos[5].Gomb[jobb]  = SDLK_ASTERISK;
-    Jatekos[5].Gomb[loves] = SDLK_MINUS;
+    Jatekos[5].Gomb[bal]   = SDLK_KP_DIVIDE;
+    Jatekos[5].Gomb[jobb]  = SDLK_KP_MULTIPLY;
+    Jatekos[5].Gomb[loves] = SDLK_KP_MINUS;
 
     // Kép törlése
     UresImage(true, AktualisMod.VanKeret);
