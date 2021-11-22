@@ -737,12 +737,17 @@ int main()
         SDL_Log("Nem indithato az SDL: %s", SDL_GetError());
         exit(1);
     }
-    SDL_Window *window = SDL_CreateWindow("Zatacka", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
+
+    SDL_DisplayMode dm;
+    SDL_GetCurrentDisplayMode(0, &dm);
+
+    SDL_Window *window = SDL_CreateWindow("Zatacka", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, dm.w, dm.h, SDL_WINDOW_FULLSCREEN);
     if (window == NULL) {
         SDL_Log("Nem hozhato letre az ablak: %s", SDL_GetError());
         exit(1);
     }
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if (renderer == NULL) {
         SDL_Log("Nem hozhato letre a megjelenito: %s", SDL_GetError());
         exit(1);
