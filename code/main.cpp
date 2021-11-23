@@ -5,17 +5,17 @@
 #include "jatekter.h"
 #include "menu.h"
 
-class TFegyver
+class Fegyver
 {
 public:
     int Szog;
     int Szam; // a tulajdonos száma
     double X;
     double Y;
-    TFegyver(int x, int y, int irany, int Tulaj);
+    Fegyver(int x, int y, int irany, int Tulaj);
 };
 
-struct TJatekos {
+struct Jatekos {
    int Gomb[gombSzam]; // A játékos 3 gombjának az azonosítója
    int Irany; // A vonal haladási iránya [fok]
    int Kanyar; // Bal: -1, Egyenes: 0, Jobb: 1
@@ -23,14 +23,14 @@ struct TJatekos {
    double HelyY;
    bool Engedett; // gyk. Enabled
    int Pont; // Pontszám
-   TFegyver* Fegyver = nullptr; // == kilőtt golyó
+   Fegyver* Fegyver = nullptr; // == kilőtt golyó
    int HalalfejIdozites; // Ennyi idő múlva tűnik el a halálfej
 };
 
-class TForm1
+class Zatacka
 {
 public:
-    TForm1(SDL_Renderer* renderer, Menu& menu, Jatekter& jt, Eredmenyjelzo& ej);
+    Zatacka(SDL_Renderer* renderer, Menu& menu, Jatekter& jt, Eredmenyjelzo& ej);
 
     void Timer1Timer();
     void FormKeyDown(SDL_Keycode Key);
@@ -54,7 +54,7 @@ private:
     };
 
     int timer_tag;
-    TJatekos Jatekos[Jatekosok];
+    Jatekos Jatekos[Jatekosok];
     int KepSzeles; // Képernyő szélessége - jobb oldali 120 pixeles eredményjelző
     int KepMagas; // Képernyő magassága
     int PanelJatszoEmberek; // Összes résztvevő (ebből számoljuk ki a nyeréshez szükséges pontszámot stb.)
@@ -68,10 +68,10 @@ private:
     void PanelLabelHideAll();
     bool JatekosPozicioRendben();
     void PaintBoxRajzol();
-    void FegyverTimer(TFegyver** fegyver);
+    void FegyverTimer(Fegyver** fegyver);
 };
 
-TForm1::TForm1(
+Zatacka::Zatacka(
     SDL_Renderer* renderer, Menu& menu, Jatekter& jt, Eredmenyjelzo& ej
 ) : renderer(renderer), jatekter(jt), eredmenyjelzo(ej), menu(menu)
 {
@@ -79,26 +79,22 @@ TForm1::TForm1(
     PaintBoxRajzol();
 }
 
-// var
-
-// implementation
-
 // Ha a játékosnak legalább egy pontja van, kilő egy golyót ("fegyvert ad neki")
 // Levon tőle egy pontot
-void TForm1::NewFegyver(int a)
+void Zatacka::NewFegyver(int a)
 {
     if (!Jatekos[a].Fegyver && Jatekos[a].Pont >= 1 && Jatekos[a].Engedett) {
         Jatekos[a].Pont--;
         eredmenyjelzo.Beallit(a, Jatekos[a].Pont, true);
         eredmenyjelzo.Draw();
 
-        Jatekos[a].Fegyver = new TFegyver(Round(Jatekos[a].HelyX), Round(Jatekos[a].HelyY), Jatekos[a].Irany, a);
+        Jatekos[a].Fegyver = new Fegyver(Round(Jatekos[a].HelyX), Round(Jatekos[a].HelyY), Jatekos[a].Irany, a);
     }
 }
 
 // Helyzet, irány, tulaj megadása
 // + beregisztrálja a timert, amit én valahogy máshogy fogok megoldani.
-TFegyver::TFegyver(int x, int y, int Irany, int Tulaj)
+Fegyver::Fegyver(int x, int y, int Irany, int Tulaj)
 {
     Szog = Irany;
     double offset = (Vastagsag / 2.0) - 0.5; // A pixelpaca közepéről induljon a golyó
@@ -108,13 +104,13 @@ TFegyver::TFegyver(int x, int y, int Irany, int Tulaj)
 }
 
 // Lépteti a fegyvert/golyót
-void TForm1::FegyverTimer(TFegyver** fegyver_ptr)
+void Zatacka::FegyverTimer(Fegyver** fegyver_ptr)
 {
     if(fegyver_ptr == nullptr || *fegyver_ptr == nullptr) {
         return;
     }
 
-    TFegyver* fegyver = *fegyver_ptr;
+    Fegyver* fegyver = *fegyver_ptr;
 
     // Kitöröljük a golyót az előző helyről
     jatekter.Golyo(fegyver->X, fegyver->Y, clBlack);
@@ -135,7 +131,7 @@ void TForm1::FegyverTimer(TFegyver** fegyver_ptr)
 
 // Adott x, y ponttól 'Vastagsag' lépésnyire jobbra és lefele
 // hány olyan pixel van, ami nem fekete? (szam == játékos száma)
-bool TForm1::Utkozes(int x, int y, int jatekos)
+bool Zatacka::Utkozes(int x, int y, int jatekos)
 {
     int SajatSzin = 0;
     int NemFekete = 0;
@@ -159,7 +155,7 @@ bool TForm1::Utkozes(int x, int y, int jatekos)
 }
 
 // A Form1 tárolja az egész játékot, ezért kb. ez a függvény inicializál mindent.
-void TForm1::FormCreate()
+void Zatacka::FormCreate()
 {
     KepSzeles = jatekter.dest_rect.w;
     KepMagas = jatekter.dest_rect.h;
@@ -204,7 +200,7 @@ void TForm1::FormCreate()
 }
 
 // Újrarajzoljuk a pályát játék elején
-void TForm1::UresImage(bool Torol, bool VanKeret)
+void Zatacka::UresImage(bool Torol, bool VanKeret)
 {
     if (Torol) {
         jatekter.Torol();
@@ -220,7 +216,7 @@ void TForm1::UresImage(bool Torol, bool VanKeret)
 }
 
 // Üt a timer, történnek az időfüggő dolgok
-void TForm1::Timer1Timer()
+void Zatacka::Timer1Timer()
 {
     if(jatek_allapot != JATEK) {
         return;
@@ -366,7 +362,7 @@ void TForm1::Timer1Timer()
 }
 
 // Megnyomtunk egy gombot
-void TForm1::FormKeyDown(SDL_Keycode Key)
+void Zatacka::FormKeyDown(SDL_Keycode Key)
 {
     // ESC
     // Játék -> Menü -> Kilépés
@@ -476,7 +472,7 @@ void TForm1::FormKeyDown(SDL_Keycode Key)
 }
 
 // Felengedtük a gombot -> Játék közben visszaállunk egyenesbe
-void TForm1::FormKeyUp(SDL_Keycode Key)
+void Zatacka::FormKeyUp(SDL_Keycode Key)
 {
     if (jatek_allapot == JATEK) {
         for (int a = 0; a < Jatekosok; a++) {
@@ -491,7 +487,7 @@ void TForm1::FormKeyUp(SDL_Keycode Key)
 }
 
 // Megnyomjuk az egeret -> Játék vezérlése vagy játékos kiválasztása
-void TForm1::FormMouseDown(uint8_t Button, int32_t X, int32_t Y)
+void Zatacka::FormMouseDown(uint8_t Button, int32_t X, int32_t Y)
 {
     if (jatek_allapot == JATEK) {
         if (Button == SDL_BUTTON_LEFT) {
@@ -517,7 +513,7 @@ void TForm1::FormMouseDown(uint8_t Button, int32_t X, int32_t Y)
 }
 
 // Felengedjük az egeret -> Az egeres játékos abbahagyja a kanyarodást
-void TForm1::FormMouseUp(uint8_t Button, int32_t X, int32_t Y)
+void Zatacka::FormMouseUp(uint8_t Button, int32_t X, int32_t Y)
 {
     if (jatek_allapot == JATEK)
     {
@@ -531,7 +527,7 @@ void TForm1::FormMouseUp(uint8_t Button, int32_t X, int32_t Y)
 }
 
 // Új menet (nem új játék)
-void TForm1::UjMenet()
+void Zatacka::UjMenet()
 {
     jatek_allapot = JATEK;
     jatekter.UjKorSzoveg(false);
@@ -603,7 +599,7 @@ void TForm1::UjMenet()
 }
 
 // Kirajzolja a menüt resetelt játékosokkal
-void TForm1::PanelLabelHideAll()
+void Zatacka::PanelLabelHideAll()
 {
     for (int a = 0; a < Jatekosok; a++) {
         menu_allapot.jatekos_aktiv[a] = false;
@@ -614,7 +610,7 @@ void TForm1::PanelLabelHideAll()
 
 // Akkor van rendben az aktív játékosok helyzete, ha a távolságuk
 // egymástól legalább a képernyő szélességének ötöde.
-bool TForm1::JatekosPozicioRendben()
+bool Zatacka::JatekosPozicioRendben()
 {
     bool Result = true;
 
@@ -632,7 +628,7 @@ bool TForm1::JatekosPozicioRendben()
 }
 
 // Az állandó bitképet rárajzoljuk az ideiglenesre, mellé a halálfejeket, majd az egészet a képernyőre.
-void TForm1::PaintBoxRajzol()
+void Zatacka::PaintBoxRajzol()
 {
     switch (jatek_allapot)
     {
@@ -749,7 +745,7 @@ int main()
     Eredmenyjelzo eredmenyjelzo(renderer, &eredmenyjelzo_hely);
 
     // Játék osztály indítása
-    TForm1 main_form(renderer, menu, jatekter, eredmenyjelzo);
+    Zatacka main_form(renderer, menu, jatekter, eredmenyjelzo);
 
     // Event loop
     bool quit = false;
