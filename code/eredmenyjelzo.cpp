@@ -2,6 +2,7 @@
 #include <SDL2_gfxPrimitives.h>
 #include "konstans.h"
 #include <cstdio>
+#include "resource.h"
 
 const int JOBB_MARGO = 18;
 
@@ -12,7 +13,14 @@ Eredmenyjelzo::Eredmenyjelzo(SDL_Renderer* renderer, const SDL_Rect* pos_on_rend
         TTF_Init();
     }
 
-    font = TTF_OpenFont(FONT_UTVONAL, 40); // TODO: A valóságban miért nem ekkora?
+    font_rw = SDL_RWFromConstMem(font_bytes, font_bytes_size);
+    font = TTF_OpenFontRW(font_rw, 0, 40);
+}
+
+Eredmenyjelzo::~Eredmenyjelzo()
+{
+    TTF_CloseFont(font);
+    SDL_FreeRW(font_rw);
 }
 
 int Eredmenyjelzo::DrawBase(SDL_Texture* base)

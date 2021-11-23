@@ -16,9 +16,20 @@ Jatekter::Jatekter(SDL_Renderer* renderer, SDL_Rect* pos_on_renderer) :
         TTF_Init();
     }
 
-    font = TTF_OpenFont(FONT_UTVONAL, 43);
+    font_rw = SDL_RWFromConstMem(font_bytes, font_bytes_size);
+    font = TTF_OpenFontRW(font_rw, 0, 43);
 
     HalalfejInit();
+}
+
+Jatekter::~Jatekter()
+{
+    TTF_CloseFont(font);
+    SDL_FreeRW(font_rw);
+
+    for(int i = 0; i < Jatekosok; i++) {
+        SDL_DestroyTexture(halalfej[i]);
+    }
 }
 
 int Jatekter::DrawTemp(SDL_Texture* temp)

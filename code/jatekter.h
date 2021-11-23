@@ -9,6 +9,7 @@ class Jatekter : public TwoLayerDrawer
 {
 public:
     Jatekter(SDL_Renderer* renderer, SDL_Rect* pos_on_renderer);
+    ~Jatekter();
 
     void Torol();
     void Keret();
@@ -27,6 +28,7 @@ public:
     SDL_Rect font_pozicio;
 
 private:
+    SDL_RWops* font_rw;
     TTF_Font* font;
     SDL_Texture* halalfej[Jatekosok];
 

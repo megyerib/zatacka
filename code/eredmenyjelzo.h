@@ -8,9 +8,11 @@ class Eredmenyjelzo : public TwoLayerDrawer
 {
 public:
     Eredmenyjelzo(SDL_Renderer* renderer, const SDL_Rect* pos_on_renderer);
+    ~Eredmenyjelzo();
     void Beallit(int jatekos, int pont, bool eng);
 
 private:
+    SDL_RWops* font_rw;
     TTF_Font* font;
 
     bool eng[Jatekosok] = {false};

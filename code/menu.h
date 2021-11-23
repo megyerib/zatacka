@@ -11,6 +11,7 @@ class Menu : public TwoLayerDrawer
 {
 public:
     Menu(SDL_Renderer* renderer, const SDL_Rect* pos_on_renderer);
+    ~Menu();
     void Frissit(const MenuAllapot& allapot);
 
 private:
@@ -20,7 +21,11 @@ private:
 
     MenuAllapot allapot = {0};
 
-    TTF_Font* font_13pt;
-    TTF_Font* font_13pt_bold;
-    TTF_Font* font_16pt_bold;
+    SDL_RWops* font_13_rw;
+    SDL_RWops* font_13b_rw;
+    SDL_RWops* font_16b_rw;
+
+    TTF_Font* font_13;
+    TTF_Font* font_13b;
+    TTF_Font* font_16b;
 };
