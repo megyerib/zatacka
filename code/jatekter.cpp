@@ -2,6 +2,7 @@
 #include "konstans.h"
 #include <SDL2_gfxPrimitives.h>
 #include <SDL_image.h>
+#include "resource.h"
 
 Jatekter::Jatekter(SDL_Renderer* renderer, SDL_Rect* pos_on_renderer) :
     TwoLayerDrawer(renderer, pos_on_renderer)
@@ -164,7 +165,10 @@ void Jatekter::UjKorSzoveg(bool megjelenit)
 
 void Jatekter::HalalfejInit()
 {
-    SDL_Surface* raw = IMG_Load(HALALFEJ_UTVONAL);
+    SDL_RWops* halalfej_rwops = SDL_RWFromConstMem(halalfej_bytes, halalfej_bytes_size);
+    SDL_Surface* raw = IMG_Load_RW(halalfej_rwops, 0);
+    SDL_RWclose(halalfej_rwops);
+
     SDL_Surface* alap = SDL_ConvertSurfaceFormat(raw, SDL_PIXELFORMAT_RGBA32, 0);
 
     halalfej_w = alap->w;

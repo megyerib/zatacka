@@ -82,5 +82,3 @@ struct MenuAllapot
 
 static char FONT_UTVONAL[] = "res/font_hun.ttf";
 static char FONT_BOLD_UTVONAL[] = "res/font_bold_hun.ttf";
-static char HALALFEJ_UTVONAL[] = "res/death.png";
-static char LOGO_UTVONAL[] = "res/logo.png";

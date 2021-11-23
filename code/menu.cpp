@@ -1,6 +1,7 @@
 #include "menu.h"
 #include <SDL2_gfxPrimitives.h>
 #include <SDL_image.h>
+#include "resource.h"
 
 Menu::Menu(SDL_Renderer* renderer, const SDL_Rect* pos_on_renderer) :
     TwoLayerDrawer(renderer, pos_on_renderer)
@@ -29,7 +30,10 @@ int Menu::DrawBase(SDL_Texture* base)
     lineColor(renderer, 0, dest_rect.h - 1, dest_rect.w - 1, dest_rect.h - 1, clLGray);
 
     // Logo
-    SDL_Texture* logo = IMG_LoadTexture(renderer, LOGO_UTVONAL);
+    SDL_RWops* logo_rwops = SDL_RWFromConstMem(logo_bytes, logo_bytes_size);
+    SDL_Texture* logo = IMG_LoadTexture_RW(renderer, logo_rwops, 0);
+    SDL_RWclose(logo_rwops);
+
     SDL_Rect logo_poz = {
         .x = 6,
         .y = 6,
