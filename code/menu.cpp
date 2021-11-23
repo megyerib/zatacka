@@ -60,8 +60,9 @@ int Menu::DrawBase(SDL_Texture* base)
     SDL_DestroyTexture(logo);
 
     // 'Vezérlés' box (8, 68)
-    rectangleColor(renderer, 9, 76, 156, 248, clWhite);
-    rectangleColor(renderer, 8, 75, 155, 247, clLGray);
+    rectangleColor(renderer, 9, 76, 157, 249, clWhite);
+    rectangleColor(renderer, 8, 75, 156, 248, clLGray);
+    boxColor(renderer, 16, 65, 72, 85, clGray);
     Text( 20,  68, font_13, "Vezérlés", clWhite, clGray);
     Text( 18,  88, font_13b, "Kanyar - Lövés", clWhite);
     Text( 24, 108, font_13, "1     Q        2", clWhite);
@@ -73,10 +74,11 @@ int Menu::DrawBase(SDL_Texture* base)
     Text( 48, 228, font_13, "Egér", clWhite);
 
     // 'Játékmód' box (160, 68)
-    rectangleColor(renderer, 161, 76, 448, 288, clWhite);
-    rectangleColor(renderer, 160, 75, 447, 287, clLGray);
-    Text(167,  73, font_13, "Játékmód", clWhite, clGray);
-    Text(180, 106, font_13, "a vonalak szaggatottak", clSilver);
+    rectangleColor(renderer, 161, 76, 449, 289, clWhite);
+    rectangleColor(renderer, 160, 75, 448, 288, clLGray);
+    boxColor(renderer, 168, 67, 229, 84, clGray);
+    Text(172,  68, font_13, "Játékmód", clWhite, clGray);
+    Text(180, 104, font_13, "a vonalak szaggatottak", clSilver);
     Text(180, 148, font_13, "a vonalak nem szaggatottak", clSilver);
     Text(180, 192, font_13, "a vonalak erősen szaggatottak, de új", clSilver);
     Text(180, 208, font_13, "menetnél megmaradnak", clSilver);
@@ -101,22 +103,28 @@ int Menu::DrawTemp(SDL_Texture* temp)
     TTF_Font* mod_fontok[] = {font_13, font_13, font_13, font_13};
     mod_fontok[allapot.jatekmod] = font_13b;
 
-    Text(168,  88, mod_fontok[STANDARD],   "Standard (F1)",       clWhite);
-    Text(168, 132, mod_fontok[FOLYTONOS],  "Folytonos mód (F2)",  clWhite);
-    Text(168, 176, mod_fontok[OROKLODO],   "Öröklődő mód (F3)",   clWhite);
-    Text(168, 236, mod_fontok[FALNELKULI], "Falnélküli mód (F4)", clWhite);
+    // Blended-del nem szép a renderelés, ezért kell shaded-del írni
+    Text(168,  88, mod_fontok[STANDARD],   "Standard (F1)",       clWhite, clGray);
+    Text(168, 132, mod_fontok[FOLYTONOS],  "Folytonos mód (F2)",  clWhite, clGray);
+    Text(168, 176, mod_fontok[OROKLODO],   "Öröklődő mód (F3)",   clWhite, clGray);
+    Text(168, 236, mod_fontok[FALNELKULI], "Falnélküli mód (F4)", clWhite, clGray);
     
     return 0;
 }
 
 void Menu::Text(int x, int y, TTF_Font* font, string text, uint32_t fg, uint32_t bg)
 {
-    SDL_Color color = *(SDL_Color*)&fg;
+    SDL_Color color_fg = *(SDL_Color*)&fg;
+    SDL_Color color_bg = *(SDL_Color*)&bg;
 
     SDL_Surface *surface;
     SDL_Texture *texture;
     
-    surface = TTF_RenderUTF8_Blended(font, text.data(), color);
+    if(bg == 0) {
+        surface = TTF_RenderUTF8_Blended(font, text.data(), color_fg);
+    } else {
+        surface = TTF_RenderUTF8_Shaded(font, text.data(), color_fg, color_bg);
+    }
 
     texture = SDL_CreateTextureFromSurface(renderer, surface);
     SDL_Rect position = {
@@ -124,17 +132,6 @@ void Menu::Text(int x, int y, TTF_Font* font, string text, uint32_t fg, uint32_t
         .y = y,
     };
     SDL_QueryTexture(texture, NULL, NULL, &position.w, &position.h);
-    
-    if(bg != 0) {
-        boxColor( // +3px padding
-            renderer,
-            position.x - 3,
-            position.y,
-            position.x + position.w + 5,
-            position.y + position.h - 1,
-            bg
-        );
-    }
 
     SDL_RenderCopy(renderer, texture, NULL, &position);
 

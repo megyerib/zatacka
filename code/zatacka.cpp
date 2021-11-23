@@ -256,8 +256,6 @@ void Zatacka::Timer1Timer()
                 q = Max(q, jatekos[b].Pont);
             }
 
-            eredmenyjelzo.Draw();
-
             // senki nincs már életben
             if (p <= 1) {
                 if (q < (PanelJatszoEmberek - 1) * 25) {
@@ -387,7 +385,6 @@ void Zatacka::FormKeyDown(SDL_Keycode Key)
             if (PanelJatszoEmberek >= MinimalisJatekos) {
                 AktualisMod = JatekMod[menu_allapot.jatekmod];
                 UresImage(true, AktualisMod.VanKeret); //új játéknál mindig töröljük a pályát
-                jatekter.Draw(); // Elrejtjük a menüt
                 for (int a = 0; a < Jatekosok; a++) {
                     jatekos[a].Engedett = menu_allapot.jatekos_aktiv[a];
                     jatekos[a].Pont = AktualisMod.StartPont;
@@ -529,14 +526,14 @@ void Zatacka::UjMenet()
     SDL_FlushEvent(SDL_USEREVENT); // Az eddigi timer leütéseket töröljük
 }
 
-// Kirajzolja a menüt resetelt játékosokkal
+// Reseteli a menüt (nem rajzolja ki)
 void Zatacka::PanelLabelHideAll()
 {
     for (int a = 0; a < Jatekosok; a++) {
         menu_allapot.jatekos_aktiv[a] = false;
     }
     menu_allapot.jatekmod = STANDARD;
-    jatekter.UjKorSzoveg(true);
+    menu.Frissit(menu_allapot);
 }
 
 // Akkor van rendben az aktív játékosok helyzete, ha a távolságuk

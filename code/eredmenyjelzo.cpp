@@ -45,10 +45,11 @@ int Eredmenyjelzo::DrawTemp(SDL_Texture* temp)
 
         uint32_t szin32 = Szinek[i];
         SDL_Color szin = *(SDL_Color*)&szin32;
+        SDL_Color fekete = {0, 0, 0, 255};
 
         char pont_str[4];
         snprintf(pont_str, 4, "%d", pont[i]);
-        felirat = TTF_RenderUTF8_Blended(font, pont_str, szin);
+        felirat = TTF_RenderUTF8_Shaded(font, pont_str, szin, fekete);
         felirat_t = SDL_CreateTextureFromSurface(renderer, felirat);
 
         SDL_Rect font_poz;
