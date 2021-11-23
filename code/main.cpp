@@ -5,11 +5,6 @@
 #include "jatekter.h"
 #include "menu.h"
 
-struct TKettoSzin {
-    int SajatSzin;
-    int NemFekete;
-};
-
 class TFegyver
 {
 public:
@@ -66,7 +61,7 @@ private:
     TJatekMod AktualisMod;
 
     void NewFegyver(int a);
-    TKettoSzin SzineketSzamol(int x, int y, int szam);
+    bool Utkozes(int x, int y, int jatekos);
     void FormCreate();
     void UresImage(bool Torol, bool VanKeret);
     void UjMenet();
@@ -140,12 +135,10 @@ void TForm1::FegyverTimer(TFegyver** fegyver_ptr)
 
 // Adott x, y ponttól 'Vastagsag' lépésnyire jobbra és lefele
 // hány olyan pixel van, ami nem fekete? (szam == játékos száma)
-TKettoSzin TForm1::SzineketSzamol(int x, int y, int szam)
+bool TForm1::Utkozes(int x, int y, int jatekos)
 {
-    TKettoSzin e = {
-        .SajatSzin = 0,
-        .NemFekete = 0
-    };
+    int SajatSzin = 0;
+    int NemFekete = 0;
 
     for (int a = x; a < x + Vastagsag; a++) {
         for (int b = y; b < y + Vastagsag; b++) {
@@ -153,16 +146,16 @@ TKettoSzin TForm1::SzineketSzamol(int x, int y, int szam)
             if ((a >= KepSzeles) || (b >= KepMagas)) {
                 continue; // Ha a képpont kívül esik a tartományon, akkor nem kell vizsgálni.
             }
-            if (c == Szinek[szam]) {
-                e.SajatSzin++;
+            if (c == Szinek[jatekos]) {
+                SajatSzin++;
             }
             else if (c != clBlack) {
-                e.NemFekete++;
+                NemFekete++;
             }
         }
     }
 
-    return e;
+    return (NemFekete > 0) || (SajatSzin > 9) || (AktualisMod.VanKeret && ((x<=0) || (y<=0) || (x>=KepSzeles-Vastagsag) || (y>=KepMagas-Vastagsag)));
 }
 
 // A Form1 tárolja az egész játékot, ezért kb. ez a függvény inicializál mindent.
@@ -302,10 +295,8 @@ void TForm1::Timer1Timer()
         int x = Round(Jatekos[a].HelyX);
         int y = Round(Jatekos[a].HelyY);
 
-        TKettoSzin KettoSzin = SzineketSzamol(x, y, a);
-
         // Meghalt a játékos (vonallal, kerettel vagy golyóval ütközött)
-        if ((KettoSzin.NemFekete>0) || (KettoSzin.SajatSzin>9) || (AktualisMod.VanKeret && ((x<=0) || (y<=0) || (x>=KepSzeles-Vastagsag) || (y>=KepMagas-Vastagsag)))) {
+        if (Utkozes(x, y, a)) {
             Jatekos[a].Engedett = false; // Játékos deaktiválása
 
             // Halálfej bekapcsolása
