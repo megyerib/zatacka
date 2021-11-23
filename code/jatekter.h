@@ -3,6 +3,7 @@
 #include "port.h"
 #include <SDL_ttf.h>
 #include "two_layer_drawer.h"
+#include "konstans.h"
 
 class Jatekter : public TwoLayerDrawer
 {

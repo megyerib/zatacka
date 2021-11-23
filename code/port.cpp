@@ -1,5 +1,6 @@
 #include "port.h"
 #include <cmath>
+#include "time.h"
 
 int Max(int a, int b)
 {
@@ -34,9 +35,4 @@ double cos_fok(double x)
 double sqr(double x)
 {
     return x * x;
-}
-
-TPoint::TPoint(int, int)
-{
-
 }

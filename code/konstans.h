@@ -20,6 +20,14 @@ enum TColor
     clGray    = 0xFF202020, // Menü
 };
 
+enum Gomb {
+    bal = 0,
+    jobb,
+    loves,
+
+    gombSzam
+};
+
 const int EREDMJ_SZ = 120; // Eredményjelző szélessége [px]
 
 const int Jatekosok = 7; // Játékosok max száma
