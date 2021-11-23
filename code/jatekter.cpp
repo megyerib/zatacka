@@ -7,56 +7,29 @@
 Jatekter::Jatekter(SDL_Renderer* renderer, SDL_Rect* pos_on_renderer) :
     TwoLayerDrawer(renderer, pos_on_renderer)
 {
-    font_pozicio.x = 16;
-    font_pozicio.y = dest_rect.h - 70;
-    font_pozicio.w = 415;
-    font_pozicio.h = 52;
-
-    if(!TTF_WasInit()) {
-        TTF_Init();
-    }
-
-    font_rw = SDL_RWFromConstMem(font_bytes, font_bytes_size);
-    font = TTF_OpenFontRW(font_rw, 0, 43);
-
     HalalfejInit();
+    FeliratInit();
 }
 
 Jatekter::~Jatekter()
 {
-    TTF_CloseFont(font);
-    SDL_FreeRW(font_rw);
-
+    SDL_DestroyTexture(felirat);
+    
     for(int i = 0; i < Jatekosok; i++) {
-        SDL_DestroyTexture(halalfej[i]);
+        SDL_DestroyTexture(halalfej[i].texture);
     }
 }
 
 int Jatekter::DrawTemp(SDL_Texture* temp)
 {
     for(int i = 0; i < Jatekosok; i++) {
-        if(halalfej_adat[i].eng) {
-            SDL_Rect rect = {
-                .x = halalfej_adat[i].x - halalfej_w / 2,
-                .y = halalfej_adat[i].y - halalfej_h / 2,
-                .w = halalfej_w,
-                .h = halalfej_h,
-            };
-            SDL_RenderCopy(renderer, halalfej[i], NULL, &rect);
+        if(halalfej[i].eng) {
+            SDL_RenderCopy(renderer, halalfej[i].texture, NULL, &halalfej[i].poz);
         }
     }
     
     if(uj_kor_szoveg) {
-        SDL_Surface *felirat;
-        SDL_Texture *felirat_t;
-
-        SDL_Color feher = {0xFF, 0xFF, 0xFF, 0xFF};
-        felirat = TTF_RenderUTF8_Blended(font, "Új menethez szóköz...", feher);
-        felirat_t = SDL_CreateTextureFromSurface(renderer, felirat);
-        
-        SDL_RenderCopy(renderer, felirat_t, NULL, &font_pozicio);
-        SDL_FreeSurface(felirat);
-        SDL_DestroyTexture(felirat_t);
+        SDL_RenderCopy(renderer, felirat, NULL, &felirat_poz);
     }
 
     return 0;
@@ -79,9 +52,7 @@ void Jatekter::Golyo(int x, int y, uint32_t szin)
 void Jatekter::Torol()
 {
     SDL_SetRenderTarget(renderer, base_texture);
-
     boxColor(renderer, 0, 0, dest_rect.w - 1, dest_rect.h - 1, clBlack);
-
     SDL_SetRenderTarget(renderer, NULL);
 }
 
@@ -136,9 +107,7 @@ void Jatekter::Kor(int x, int y, int r, int vastag, TColor szin)
 void Jatekter::Pont(int x, int y, TColor szin)
 {
     SDL_SetRenderTarget(renderer, base_texture);
-
     boxColor(renderer, x, y, x + Vastagsag - 1, y + Vastagsag - 1, szin);
-
     SDL_SetRenderTarget(renderer, NULL);
 }
 
@@ -164,9 +133,10 @@ uint32_t Jatekter::Szin(int x, int y)
 
 void Jatekter::Halalfej(int jatekos, bool eng, int x, int y)
 {
-    halalfej_adat[jatekos].x = x;
-    halalfej_adat[jatekos].y = y;
-    halalfej_adat[jatekos].eng = eng;
+    struct Halalfej& h = halalfej[jatekos];
+    h.poz.x = x - h.poz.w / 2;
+    h.poz.y = y - h.poz.h / 2;
+    h.eng = eng;
 }
 
 void Jatekter::UjKorSzoveg(bool megjelenit)
@@ -182,9 +152,6 @@ void Jatekter::HalalfejInit()
 
     SDL_Surface* alap = SDL_ConvertSurfaceFormat(raw, SDL_PIXELFORMAT_RGBA32, 0);
 
-    halalfej_w = alap->w;
-    halalfej_h = alap->h;
-
     uint32_t prev_color = clWhite;
     uint32_t* pixels = (uint32_t*)alap->pixels;
 
@@ -194,12 +161,37 @@ void Jatekter::HalalfejInit()
                 pixels[p] = Szinek[i];
             }
         }
-        halalfej[i] = SDL_CreateTextureFromSurface(renderer, alap);
+        halalfej[i].texture = SDL_CreateTextureFromSurface(renderer, alap);
+        halalfej[i].poz.w = alap->w;
+        halalfej[i].poz.h = alap->h;
+
         prev_color = Szinek[i];
     }
 
     SDL_FreeSurface(raw);
     SDL_FreeSurface(alap);
+}
+
+void Jatekter::FeliratInit()
+{
+    if(!TTF_WasInit()) {
+        TTF_Init();
+    }
+    
+    SDL_RWops* font_rw = SDL_RWFromConstMem(font_bytes, font_bytes_size);
+    TTF_Font* font = TTF_OpenFontRW(font_rw, 0, 43);
+
+    SDL_Color feher = {0xFF, 0xFF, 0xFF, 0xFF};
+    SDL_Surface *felirat_surface = TTF_RenderUTF8_Blended(font, "Új menethez szóköz...", feher);
+    felirat = SDL_CreateTextureFromSurface(renderer, felirat_surface);
+
+    felirat_poz.x = 16;
+    felirat_poz.y = dest_rect.h - 70;
+    SDL_QueryTexture(felirat, NULL, NULL, &felirat_poz.w, &felirat_poz.h);
+
+    SDL_FreeSurface(felirat_surface);
+    TTF_CloseFont(font);
+    SDL_FreeRW(font_rw);
 }
 
 void Jatekter::Szurkit()
