@@ -26,7 +26,8 @@ $(debug_dir)/zatacka: code/*.cpp code/*.h Makefile $(build_dir)/resource.h
 		-Og -g3 \
 		code/*.cpp \
 		$(build_dir)/resource.c -I$(build_dir) \
-		$(sdl_flags)
+		$(sdl_flags) \
+		-DVERSION="\"$(shell ./version_string.sh debug)\""
 
 $(release_dir)/zatacka: code/*.cpp code/*.h Makefile $(build_dir)/resource.h
 	mkdir -p $(release_dir)
@@ -35,7 +36,8 @@ $(release_dir)/zatacka: code/*.cpp code/*.h Makefile $(build_dir)/resource.h
 		-O3 \
 		code/*.cpp \
 		$(build_dir)/resource.c -I$(build_dir) \
-		$(sdl_flags)
+		$(sdl_flags) \
+		-DVERSION="\"$(shell ./version_string.sh)\""
 
 $(deploy_dir)/zatacka-linux.zip: $(release_dir)/zatacka
 	mkdir -p $(deploy_dir)

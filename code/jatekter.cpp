@@ -32,6 +32,12 @@ int Jatekter::DrawTemp(SDL_Texture* temp)
         SDL_RenderCopy(renderer, felirat, NULL, &felirat_poz);
     }
 
+#ifdef VERSION
+    if(verziot_mutat) {
+        stringColor(renderer, 16, 340, VERSION, clGray);
+    }
+#endif
+
     return 0;
 }
 
@@ -92,7 +98,7 @@ void Jatekter::Kor(int x, int y, int r, int vastag, TColor szin)
     SDL_SetRenderTarget(renderer, kor_textura);
 
     filledCircleColor(renderer, r_k, r_k, r_k, szin);
-    filledCircleColor(renderer, r_k, r_k, r_b, clBlack); // TODO: legyen átlátszó
+    filledCircleColor(renderer, r_k, r_k, r_b, clBlack);
 
     SDL_SetRenderTarget(renderer, base_texture);
 
@@ -111,7 +117,6 @@ void Jatekter::Pont(int x, int y, TColor szin)
     SDL_SetRenderTarget(renderer, NULL);
 }
 
-// TODO: Ezt SDL-ben nem igazán így kell csinálni
 uint32_t Jatekter::Szin(int x, int y)
 {
     SDL_Rect px = {
@@ -142,6 +147,11 @@ void Jatekter::Halalfej(int jatekos, bool eng, int x, int y)
 void Jatekter::UjKorSzoveg(bool megjelenit)
 {
     uj_kor_szoveg = megjelenit;
+}
+
+void Jatekter::VerziotMutat(bool mutat)
+{
+    verziot_mutat = mutat;
 }
 
 void Jatekter::HalalfejInit()

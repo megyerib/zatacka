@@ -459,6 +459,7 @@ void Zatacka::UjMenet()
 {
     jatek_allapot = JATEK;
     jatekter.UjKorSzoveg(false);
+    jatekter.VerziotMutat(false); // Az első játéknál letiltjuk és többet nem jelenítjük meg.
     
     // Visszaállítjuk a játékosok fegyverét (akkor aktív a fegyver, ha épp van golyó a pályán)
     for (int a = 0; a < Jatekosok; a++) {

@@ -29,6 +29,7 @@ public:
     // Beállít
     void Halalfej(int jatekos, bool eng, int x = 0, int y = 0);
     void UjKorSzoveg(bool megjelenit);
+    void VerziotMutat(bool mutat);
 
     // Lekérdez
     uint32_t Szin(int x, int y);
@@ -45,4 +46,6 @@ private:
     void FeliratInit();
 
     virtual int DrawTemp(SDL_Texture* temp) override;
+
+    bool verziot_mutat = true;
 };
