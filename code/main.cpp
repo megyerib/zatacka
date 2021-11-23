@@ -1,6 +1,8 @@
 #include <SDL.h>
 #include "zatacka.h"
 
+const bool FULLSCREEN = true;
+
 // Ezt hívja meg az SDL időzítő.
 // Berak egy user eventet az eseménysorba.
 Uint32 idozit(Uint32 ms, void *param);
@@ -17,11 +19,13 @@ int main()
     }
 
     // Window init
-    SDL_Window *window = CreateMainWindow((char*)"Zatacka", true);
+    SDL_Window *window = CreateMainWindow((char*)"Zatacka", FULLSCREEN);
     if (window == NULL) {
         SDL_Log("Nem hozhato letre az ablak: %s", SDL_GetError());
         exit(1);
     }
+
+    SDL_ShowCursor(FULLSCREEN ? SDL_DISABLE : SDL_ENABLE);
 
     // Renderer init
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
