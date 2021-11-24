@@ -5,7 +5,8 @@ deploy_dir := deploy
 
 packer := $(build_dir)/packer
 
-sdl_flags := `sdl2-config --cflags --libs` -lSDL2_gfx -lSDL2_ttf -lSDL2_image -lSDL2_mixer
+sdl_flags := `sdl2-config --cflags --libs` -lSDL2_gfx -lSDL2_ttf -lSDL2_image
+sdl_flags_static := $(shell sdl2-config --cflags --static-libs | sed 's/-lSDL2/-Wl,-Bstatic -lSDL2 -Wl,-Bdynamic/') -lSDL2_gfx -lSDL2_ttf -lSDL2_image
 
 release: $(release_dir)/zatacka
 
@@ -36,13 +37,14 @@ $(release_dir)/zatacka: code/*.cpp code/*.h Makefile $(build_dir)/resource.h
 		-O3 \
 		code/*.cpp \
 		$(build_dir)/resource.c -I$(build_dir) \
-		$(sdl_flags) \
+		$(sdl_flags_static) \
 		-DVERSION="\"$(shell ./version_string.sh)\""
+	strip $@
 
 $(deploy_dir)/zatacka-linux.zip: $(release_dir)/zatacka
 	mkdir -p $(deploy_dir)
 	rm -f $@
-	zip -j $@ $^
+	zip -j -9 $@ $^
 
 $(build_dir)/resource.h: $(packer) res/death.png res/logo.png res/font_hun.ttf res/font_bold_hun.ttf
 	$(packer)
