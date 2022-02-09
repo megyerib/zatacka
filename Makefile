@@ -33,7 +33,7 @@ $(release_dir)/zatacka: code/*.cpp code/*.h Makefile $(build_dir)/resource.h
 	mkdir -p $(release_dir)
 	g++ \
 		-o $@ \
-		-O3 \
+		-O3 -s \
 		code/*.cpp \
 		$(build_dir)/resource.c -I$(build_dir) \
 		$(sdl_flags) \
