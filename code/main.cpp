@@ -28,7 +28,7 @@ int main()
     SDL_ShowCursor(FULLSCREEN ? SDL_DISABLE : SDL_ENABLE);
 
     // Renderer init
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
     if (renderer == NULL) {
         SDL_Log("Nem hozhato letre a megjelenito: %s", SDL_GetError());
         exit(1);
