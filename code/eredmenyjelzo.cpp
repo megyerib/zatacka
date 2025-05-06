@@ -23,7 +23,7 @@ Eredmenyjelzo::~Eredmenyjelzo()
 int Eredmenyjelzo::DrawBase(SDL_Texture* base)
 {
     boxColor(renderer, 0, 0, dest_rect.w, dest_rect.h, clBlack);
-    
+
     lineColor(renderer, 0, 0, 0, dest_rect.h - 1, clWhite);
     lineColor(renderer, 0, 0, dest_rect.w - 1, 0, clWhite);
 
@@ -39,7 +39,7 @@ int Eredmenyjelzo::DrawTemp(SDL_Texture* temp)
         if(!eng[i]) {
             continue;
         }
-        
+
         SDL_Surface *felirat;
         SDL_Texture *felirat_t;
 
@@ -58,7 +58,7 @@ int Eredmenyjelzo::DrawTemp(SDL_Texture* temp)
 
         font_poz.x = EREDMJ_SZ - 15 - font_poz.w; // Jobbra zárt
         font_poz.y = 66 * i + 13;
-       
+
         SDL_RenderCopy(renderer, felirat_t, NULL, &font_poz);
         SDL_FreeSurface(felirat);
         SDL_DestroyTexture(felirat_t);

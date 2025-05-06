@@ -8,11 +8,11 @@
 // functions which you can override. DrawBase() draws the stationery texture
 // once, and DrawTemp() draws the temporary texture every time you draw the full
 // image.
-// 
+//
 // The DrawBase() function generates the base texture only at the first draw,
 // then it won't be modified again. Of course, child classes can draw on the
 // base texture too, its purpose is only to keep its state between drawings.
-// 
+//
 // When you call the Draw() function it copies the base texture onto the main
 // renderer, then creates a brand new temporary texture then calls the
 // DrawTemp() function to create the overlay layer from scratch, then copies it

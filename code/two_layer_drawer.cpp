@@ -28,11 +28,11 @@ int TwoLayerDrawer::Draw()
         DrawBase(base_texture);
         first_draw = false;
     }
-    
+
     // Copy the base texture onto the renderer
     int ret = SDL_SetRenderTarget(renderer, NULL);
     ret = ret || SDL_RenderCopy(renderer, base_texture, NULL, &dest_rect);
-    
+
     // Create overlay texture and set its blend mode
     SDL_Texture* temp_texture = SDL_CreateTexture(
         renderer,

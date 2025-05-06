@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include <SDL.h>
 
 enum TColor

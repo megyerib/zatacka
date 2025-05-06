@@ -152,7 +152,7 @@ void Zatacka::Timer1Timer()
     if(jatek_allapot != JATEK) {
         return;
     }
-    
+
     timer_tag = (timer_tag + 1) % 70;
 
     for (int a = 0; a < Jatekosok; a++) {
@@ -460,7 +460,7 @@ void Zatacka::UjMenet()
     jatek_allapot = JATEK;
     jatekter.UjKorSzoveg(false);
     jatekter.VerziotMutat(false); // Az első játéknál letiltjuk és többet nem jelenítjük meg.
-    
+
     // Visszaállítjuk a játékosok fegyverét (akkor aktív a fegyver, ha épp van golyó a pályán)
     for (int a = 0; a < Jatekosok; a++) {
         if (jatekos[a].fegyver) {
@@ -546,7 +546,7 @@ bool Zatacka::JatekosPozicioRendben()
     for (int a = 0; a < Jatekosok - 1; a++) {
         for (int b = a + 1; b < Jatekosok; b++) {
             if (jatekos[a].Engedett && jatekos[b].Engedett) {
-                if (sqrt(sqr(jatekos[a].HelyX - jatekos[b].HelyX) + sqr(jatekos[a].HelyY - jatekos[b].HelyY)) < KepSzeles / 5) {
+                if (sqrt(sqr(jatekos[a].HelyX - jatekos[b].HelyX) + sqr(jatekos[a].HelyY - jatekos[b].HelyY)) < (KepSzeles / 5.0)) {
                     Result = false;
                 }
             }
@@ -566,11 +566,14 @@ void Zatacka::PaintBoxRajzol()
         jatekter.Draw();
         eredmenyjelzo.Draw();
         break;
-    
+
     case MENU:
         jatekter.Draw();
         eredmenyjelzo.Draw();
         menu.Draw();
+        break;
+
+    default:
         break;
     }
 

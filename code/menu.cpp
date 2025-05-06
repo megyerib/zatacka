@@ -25,7 +25,7 @@ Menu::~Menu()
     TTF_CloseFont(font_13);
     TTF_CloseFont(font_13b);
     TTF_CloseFont(font_16b);
-    
+
     SDL_FreeRW(font_13_rw);
     SDL_FreeRW(font_13b_rw);
     SDL_FreeRW(font_16b_rw);
@@ -108,7 +108,7 @@ int Menu::DrawTemp(SDL_Texture* temp)
     Text(168, 132, mod_fontok[FOLYTONOS],  "Folytonos mód (F2)",  clWhite, clGray);
     Text(168, 176, mod_fontok[OROKLODO],   "Öröklődő mód (F3)",   clWhite, clGray);
     Text(168, 236, mod_fontok[FALNELKULI], "Falnélküli mód (F4)", clWhite, clGray);
-    
+
     return 0;
 }
 
@@ -119,7 +119,7 @@ void Menu::Text(int x, int y, TTF_Font* font, string text, uint32_t fg, uint32_t
 
     SDL_Surface *surface;
     SDL_Texture *texture;
-    
+
     if(bg == 0) {
         surface = TTF_RenderUTF8_Blended(font, text.data(), color_fg);
     } else {

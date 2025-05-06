@@ -14,7 +14,7 @@ Jatekter::Jatekter(SDL_Renderer* renderer, SDL_Rect* pos_on_renderer) :
 Jatekter::~Jatekter()
 {
     SDL_DestroyTexture(felirat);
-    
+
     for(int i = 0; i < Jatekosok; i++) {
         SDL_DestroyTexture(halalfej[i].texture);
     }
@@ -27,16 +27,14 @@ int Jatekter::DrawTemp(SDL_Texture* temp)
             SDL_RenderCopy(renderer, halalfej[i].texture, NULL, &halalfej[i].poz);
         }
     }
-    
+
     if(uj_kor_szoveg) {
         SDL_RenderCopy(renderer, felirat, NULL, &felirat_poz);
     }
 
-#ifdef VERSION
     if(verziot_mutat) {
         stringColor(renderer, 16, 340, VERSION, clGray);
     }
-#endif
 
     return 0;
 }
@@ -86,7 +84,7 @@ void Jatekter::Kor(int x, int y, int r, int vastag, TColor szin)
         .w = 2 * r_k + 1,
         .h = 2 * r_k + 1,
     };
-    
+
     SDL_Texture* kor_textura = SDL_CreateTexture(
         renderer,
         SDL_PIXELFORMAT_RGBA32,
@@ -128,7 +126,7 @@ uint32_t Jatekter::Szin(int x, int y)
 
     uint32_t data;
     int pitch = dest_rect.w * 4;
-    
+
     SDL_SetRenderTarget(renderer, base_texture);
     SDL_RenderReadPixels(renderer, &px, SDL_PIXELFORMAT_RGBA32, &data, pitch);
     SDL_SetRenderTarget(renderer, NULL);
@@ -187,7 +185,7 @@ void Jatekter::FeliratInit()
     if(!TTF_WasInit()) {
         TTF_Init();
     }
-    
+
     SDL_RWops* font_rw = SDL_RWFromConstMem(font_bytes, font_bytes_size);
     TTF_Font* font = TTF_OpenFontRW(font_rw, 0, 43);
 

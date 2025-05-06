@@ -80,11 +80,11 @@ int main()
         case SDL_KEYUP:
             jatek.FormKeyUp(event.key.keysym.sym);
             break;
-            
+
         case SDL_KEYDOWN:
             jatek.FormKeyDown(event.key.keysym.sym);
             break;
-        
+
         case SDL_MOUSEBUTTONDOWN:
             jatek.FormMouseDown(event.button.button, event.button.x, event.button.y);
             break;
@@ -92,7 +92,7 @@ int main()
         case SDL_MOUSEBUTTONUP:
             jatek.FormMouseUp(event.button.button, event.button.x, event.button.y);
             break;
-        
+
         case SDL_USEREVENT:
             jatek.Timer1Timer();
             break;
@@ -100,15 +100,15 @@ int main()
         case SDL_QUIT:
             quit = true;
             break;
-        
+
         default:
             break;
         }
     }
- 
+
     // Takarítás, kilépés
     SDL_Quit();
- 
+
     return 0;
 }
 
@@ -127,7 +127,7 @@ SDL_Window* CreateMainWindow(char* title, bool full_screen)
     uint32_t window_flags = SDL_WINDOW_FULLSCREEN;
 
     SDL_GetGlobalMouseState(&mouse_x, &mouse_y);
-    
+
     for(int i = 0; i < display_num; i++) {
         SDL_GetDisplayBounds(i, &db);
         if(
